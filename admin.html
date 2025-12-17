@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>SHANNN | Admin</title>
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <script>
+    if (sessionStorage.getItem("isAdmin") !== "true") {
+      alert("Akses ditolak, silakan login dulu.");
+      window.location = "index.html";
+    }
+  </script>
+
+  <header>
+    <h1>SHANNN</h1>
+    <div id="navButtons">
+      <button id="backBtn" title="Kembali">⬅️</button>
+      <button id="nextBtn" title="Maju">➡️</button>
+    </div>
+    <button id="logoutBtn">LOGOUT</button>
+  </header>
+
+  <main id="explorer"></main>
+  <div id="fab" class="fab">+</div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase.js"></script>
+  <script src="admin.js"></script>
+</body>
+</html>

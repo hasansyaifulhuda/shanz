@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>SHANNN</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    header {
+      background: #111;
+      color: white;
+      padding: 10px 15px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: relative;
+      flex-wrap: wrap;
+      transition: all 0.3s ease;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 1.4em;
+      font-weight: bold;
+    }
+
+    #navArea {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    #navArea button {
+      background: #007bff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      padding: 8px 10px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+
+    #navArea button:hover {
+      background: #0056b3;
+    }
+
+    /* Kolom pencarian */
+    #searchBar {
+      display: none;
+      width: 100%;
+      background: #111;
+      padding: 10px;
+      transition: all 0.3s ease;
+    }
+
+    #searchBar.active {
+      display: block;
+      animation: fadeIn 0.2s ease;
+    }
+
+    #searchInput {
+      width: 100%;
+      padding: 8px;
+      border-radius: 5px;
+      border: none;
+      font-size: 16px;
+    }
+
+    /* PC mode - inline search */
+    @media (min-width: 768px) {
+      #searchBar {
+        display: block !important;
+        background: transparent;
+        width: auto;
+        padding: 0;
+        margin-left: 10px;
+      }
+      #searchInput {
+        width: 200px;
+        font-size: 15px;
+        border: none;
+        border-radius: 5px;
+        padding: 6px 8px;
+      }
+      #searchInput:focus {
+        outline: 2px solid #007bff;
+      }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1 id="secretTitle">SHANNN</h1>
+    <div id="navArea">
+      <button id="backBtn" title="Kembali">⬅️</button>
+      <button id="nextBtn" title="Maju">➡️</button>
+      <button id="searchIcon" title="Cari">🔍</button>
+      <div id="searchBar">
+        <input type="text" id="searchInput" placeholder="Cari folder atau file...">
+      </div>
+    </div>
+  </header>
+
+  <main id="explorer"></main>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase.js"></script>
+ <script type="module" src="app.js"></script>
+
+  <script>
+    // ========== Modal Login Rahasia ==========
+    function showLoginModal() {
+      document.querySelectorAll(".modal").forEach(m => m.remove());
+      const modal = document.createElement("div");
+      modal.className = "modal";
+      modal.innerHTML = `
+        <div class="modal-content">
+          <h3>Masuk Admin</h3>
+          <form id="loginForm" autocomplete="off">
+            <input type="password" id="pass" placeholder="Masukkan password admin" required>
+            <div class="modal-actions">
+              <button type="submit" class="btn-primary">Masuk</button>
+              <button type="button" id="cancelBtn" class="btn-secondary">Batal</button>
+            </div>
+          </form>
+        </div>
+      `;
+      document.body.appendChild(modal);
+      modal.querySelector("#cancelBtn").onclick = () => modal.remove();
+      modal.querySelector("#loginForm").onsubmit = async (e) => {
+        e.preventDefault();
+        const pw = document.getElementById("pass").value.trim();
+        if (!pw) return alert("Masukkan password dulu!");
+        try {
+          const { data, error } = await supabaseClient.rpc("verify_admin", { pass_input: pw });
+          if (error) throw error;
+          if (data === true) {
+            sessionStorage.setItem("isAdmin", "true");
+            alert("✅ Login berhasil!");
+            window.location = "admin.html";
+          } else {
+            alert("❌ Password salah!");
+          }
+        } catch (err) {
+          alert("Login gagal: " + err.message);
+        }
+      };
+    }
+
+    // ========== Fungsi Pencarian ==========
+    function toggleSearchBar() {
+      // Hanya untuk HP
+      if (window.innerWidth < 768) {
+        const searchBar = document.getElementById("searchBar");
+        searchBar.classList.toggle("active");
+        const input = document.getElementById("searchInput");
+        if (searchBar.classList.contains("active")) {
+          input.focus();
+        } else {
+          input.value = "";
+          showAllItems();
+        }
+      }
+    }
+
+    function showAllItems() {
+      document.querySelectorAll(".folder, .file").forEach(el => el.style.display = "");
+    }
+
+    function setupSearch() {
+      const input = document.getElementById("searchInput");
+
+      input.addEventListener("input", () => {
+        const keyword = input.value.toLowerCase();
+
+        // pastikan folder & file dua-duanya difilter
+        const allItems = document.querySelectorAll(".folder, .file");
+        if (allItems.length === 0) return; // aman kalau belum render
+
+        allItems.forEach(el => {
+          const text = el.textContent.toLowerCase();
+          el.style.display = text.includes(keyword) ? "" : "none";
+        });
+      });
+    }
+
+    // ========== Shortcut & Event ==========
+    window.addEventListener("load", () => {
+      const title = document.getElementById("secretTitle");
+      let tapCount = 0;
+      let tapTimer = null;
+
+      // Ctrl+l untuk login
+      document.addEventListener("keydown", (e) => {
+        if (e.ctrlKey && e.key.toLowerCase() === "l") {
+          e.preventDefault();
+          showLoginModal();
+        }
+      });
+
+      // Klik 5x judul untuk login (HP)
+      title.addEventListener("click", () => {
+        tapCount++;
+        clearTimeout(tapTimer);
+        tapTimer = setTimeout(() => tapCount = 0, 1000);
+        if (tapCount >= 5) {
+          tapCount = 0;
+          showLoginModal();
+        }
+      });
+
+      // Klik ikon pencarian
+      document.getElementById("searchIcon").addEventListener("click", toggleSearchBar);
+      setupSearch();
+    });
+  </script>
+</body>
+</html>

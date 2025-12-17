@@ -1,0 +1,316 @@
+/* ====== GLOBAL ====== */
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  background: #f4f4f4;
+  color: #222;
+}
+
+header {
+  background: #111;
+  color: #fff;
+  padding: 12px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+header h1 {
+  margin: 0;
+  font-size: 1.5rem;
+  letter-spacing: 1px;
+}
+
+/* ====== BUTTONS ====== */
+button {
+  padding: 7px 14px;
+  background: #0b74de;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background 0.2s;
+}
+
+button:hover {
+  background: #095bb8;
+}
+
+/* ====== CONTENT ====== */
+main {
+  padding: 20px;
+}
+
+.folder, .file {
+  background: white;
+  margin-bottom: 8px;
+  padding: 10px 12px;
+  border-radius: 5px;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.folder:hover, .file:hover {
+  background: #e7f0ff;
+}
+
+/* ====== FILE CARD / THUMBNAIL VIEW ====== */
+.file-card {
+  display: inline-block;
+  width: 200px;
+  max-width: 200px;
+  margin: 12px;
+  text-align: center;
+  background: #1b1b1b;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 5px 12px rgba(0, 0, 0, 0.4);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.file-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.5);
+}
+
+.thumb-wrapper {
+  width: 100%;
+  height: 280px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #000;
+}
+
+.file-thumb {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  border-radius: 0;
+}
+
+.file-title {
+  color: #fff;
+  background: #000;
+  padding: 8px 6px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  text-align: center;
+  text-transform: uppercase;
+  white-space: normal;         
+  overflow-wrap: break-word;    
+  word-break: break-word;
+  display: flex;               
+  align-items: center;          
+  justify-content: center;     
+  height: 50px;                 
+  line-height: 1.2;
+}
+
+
+/* Grid responsif di HP */
+@media (max-width: 600px) {
+  .file-card {
+    width: 45%;
+    max-width: 45%;
+    margin: 10px 2%;
+  }
+
+  .thumb-wrapper {
+    height: 220px;
+  }
+
+  .file-title {
+    font-size: 0.8rem;
+  }
+}
+
+/* ====== FLOATING ACTION BUTTON ====== */
+.fab {
+  position: fixed;
+  bottom: 25px;
+  right: 25px;
+  background: #007bff;
+  color: white;
+  width: 55px;
+  height: 55px;
+  border-radius: 50%;
+  font-size: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+  transition: transform 0.2s;
+  z-index: 1000;
+}
+
+.fab:hover {
+  transform: scale(1.1);
+}
+
+/* ====== FAB MENU ====== */
+.fab-menu {
+  position: fixed;
+  bottom: 90px;
+  right: 33px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  z-index: 999;
+  transition: opacity 0.3s, transform 0.3s;
+}
+
+.fab-menu button {
+  background: #007bff;
+  border: none;
+  color: white;
+  font-size: 22px;
+  border-radius: 50%;
+  width: 48px;
+  height: 48px;
+  cursor: pointer;
+  box-shadow: 0 3px 6px rgba(0,0,0,0.2);
+  transition: all 0.2s ease;
+}
+
+.fab-menu button:hover {
+  background: #005dc5;
+  transform: scale(1.1);
+}
+
+/* ====== NAVIGATION BUTTONS ====== */
+#navButtons {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-right: 15px;
+}
+
+#navButtons button {
+  background: #222;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 6px 10px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+#navButtons button:hover:not(:disabled) {
+  background: #555;
+}
+
+#navButtons button:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+/* ====== CONTEXT MENU ====== */
+.context-menu {
+  position: absolute;
+  background: #222;
+  color: white;
+  border-radius: 8px;
+  padding: 5px;
+  display: none;
+  flex-direction: column;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+  z-index: 9999;
+  animation: fadeIn 0.15s ease;
+}
+
+.context-menu button {
+  background: none;
+  color: white;
+  border: none;
+  padding: 8px 15px;
+  text-align: left;
+  width: 100%;
+  font-size: 14px;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+.context-menu button:hover {
+  background: #007bff;
+}
+
+/* ====== NOTEPAD POPUP ====== */
+.notepad-modal {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw; height: 100vh;
+  background: rgba(0,0,0,0.55);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.notepad-box {
+  background: #fff;
+  width: 90%;
+  max-width: 650px;
+  border-radius: 10px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+  padding: 22px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: stretch;
+  overflow: hidden;
+  animation: fadeIn 0.2s ease;
+}
+
+.notepad-box h3 {
+  text-align: center;
+  font-size: 1.4em;
+  margin-top: 5px;
+  margin-bottom: 6px;
+  letter-spacing: 0.5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+#noteContent {
+  width: 100%;
+  min-height: 320px;
+  max-height: 75vh;
+  overflow-y: auto;
+  resize: none;
+  font-family: monospace;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  padding: 12px;
+  background: #fefefe;
+  color: #222;
+  outline: none;
+  scroll-behavior: smooth;
+  line-height: 1.4;
+  box-sizing: border-box;
+}
+
+#noteContent.preview {
+  background: #f9f9f9;
+  color: #222;
+  font-family: "Segoe UI", sans-serif;
+  line-height: 1.6;
+  white-space: pre-wrap;
+}
+
+/* ===== ANIMATION ===== */
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.97); }
+  to { opacity: 1; transform: scale(1); }
+}
