@@ -639,3 +639,34 @@ main {
     object-fit: cover !important;
     display: block;
 }
+/* =============================== */
+/*  ICON TIDAK BOLEH TERPOTONG     */
+/* =============================== */
+
+.file-card {
+    width: 200px !important;      /* ukuran kotak seragam (boleh diubah) */
+    height: 300px !important;     /* tinggi kotak seragam */
+    border-radius: 15px !important;
+    overflow: hidden !important;
+    background: #fff !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.thumb-wrapper {
+    width: 100% !important;
+    height: 100% !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #fff !important;
+}
+
+.file-thumb {
+    width: 100%;
+    height: 100%;
+    object-fit: contain !important;   /* ❗ gambar selalu utuh, tidak pernah ke-cut */
+    object-position: center;
+    image-rendering: auto;
+}
