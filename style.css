@@ -670,3 +670,81 @@ main {
     object-position: center;
     image-rendering: auto;
 }
+/* =============================== */
+/*   GRID FILES DI ADMIN & GUEST   */
+/* =============================== */
+
+#explorer {
+    display: grid !important;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 20px;
+}
+
+/* Card seragam */
+.file-card {
+    width: 100% !important;
+    height: 300px !important;
+    border-radius: 15px !important;
+    background: #fff !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden !important;
+}
+
+/* Wrapper gambar */
+.thumb-wrapper {
+    width: 100% !important;
+    height: 100% !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Gambar tidak terpotong */
+.file-thumb {
+    width: 100%;
+    height: 100%;
+    object-fit: contain !important;  /* gambar selalu utuh */
+    object-position: center;
+}
+/* =============================== */
+/*   MODE HP – SELALU 2 GRID FULL  */
+/* =============================== */
+@media (max-width: 600px) {
+
+    #explorer {
+        display: grid !important;
+        grid-template-columns: repeat(2, 1fr) !important; /* Wajib 2 kolom */
+        gap: 10px !important;  /* sedikit jarak antar icon */
+        padding: 10px !important; /* sedikit jarak tepi kiri kanan */
+    }
+
+    /* kotak icon penuh 1 kolom */
+    .file-card {
+        width: 100% !important;
+        height: 260px !important;  /* icon seragam, tidak terlalu tinggi */
+        border-radius: 12px !important;
+        overflow: hidden !important;
+        background: #fff !important;
+
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+    }
+
+    .thumb-wrapper {
+        width: 100% !important;
+        height: 100% !important;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    /* gambar selalu utuh (tidak ke-cut) */
+    .file-thumb {
+        width: 100% !important;
+        height: 100% !important;
+        object-fit: contain !important;
+    }
+}
