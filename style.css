@@ -616,3 +616,26 @@ main {
         object-fit: cover !important;
     }
 }
+/* =============================== */
+/*   FIX: SAMAKAN TINGGI SETIAP ICON DALAM 1 BARIS   */
+/* =============================== */
+
+.file-card {
+    width: 100% !important;
+    aspect-ratio: 3/4; /* semua icon jadi proporsi poster rapi */
+    overflow: hidden !important;
+    border-radius: 15px !important;
+}
+
+.thumb-wrapper {
+    width: 100% !important;
+    height: 100% !important;
+    overflow: hidden !important;
+}
+
+.file-thumb {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+    display: block;
+}
