@@ -591,3 +591,28 @@ main {
 .file-thumb {
     border-radius: 12px !important;
 }
+/* ========================== */
+/*  FIX FULL GRID DI HP       */
+/* ========================== */
+@media (max-width: 600px) {
+
+    #explorer {
+        display: grid !important;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px !important;
+        padding: 10px !important;
+    }
+
+    .file-card {
+        width: 100% !important;
+        max-width: 100% !important;
+        margin: 0 !important;
+    }
+
+    .thumb-wrapper,
+    .file-thumb {
+        width: 100% !important;
+        height: auto !important;
+        object-fit: cover !important;
+    }
+}
