@@ -341,3 +341,37 @@ main {
     width: 90%;
   }
 }
+/* Tambahkan ini atau update style lama */
+.card {
+    width: 100%;
+    max-width: 350px;     /* Biar bagus di HP */
+    margin: 0 auto;
+    border-radius: 15px;
+    overflow: hidden;
+    background: #fff;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+
+.card img {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+/* Teks nama */
+.card .name {
+    background: #000;
+    color: #fff;
+    padding: 10px;
+    text-align: center;
+    font-size: 18px;
+}
+
+/* ================================= */
+/* MEDIA QUERY HP (penting!)         */
+/* ================================= */
+@media (max-width: 600px) {
+    .card {
+        max-width: 90%;    /* Biar tidak terlalu kecil di HP */
+    }
+}
