@@ -119,17 +119,17 @@
       const modal = document.createElement("div");
       modal.className = "modal";
       modal.innerHTML = `
-        <div class="modal-content">
-          <h3>Masuk Admin</h3>
-          <form id="loginForm" autocomplete="off">
-            <input type="password" id="pass" placeholder="Masukkan password admin" required>
-            <div class="modal-actions">
-              <button type="submit" class="btn-primary">Masuk</button>
-              <button type="button" id="cancelBtn" class="btn-secondary">Batal</button>
-            </div>
-          </form>
-        </div>
-      `;
+  <div class="modal-content">
+    <h3>Masuk Admin</h3>
+    <form id="loginForm" autocomplete="off">
+      <input type="password" id="pass" placeholder="Masukkan password admin" required>
+      <div class="modal-actions">
+        <button type="submit" class="btn-primary">Masuk</button>
+        <button type="button" id="cancelBtn" class="btn-secondary">Batal</button>
+      </div>
+    </form>
+  </div>
+  `;
       document.body.appendChild(modal);
       modal.querySelector("#cancelBtn").onclick = () => modal.remove();
       modal.querySelector("#loginForm").onsubmit = async (e) => {

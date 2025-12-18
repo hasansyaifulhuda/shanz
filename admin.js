@@ -109,16 +109,25 @@ function autoLink(text) {
 
 // ====== NOTEPAD POPUP ======
 async function openNotepad(fileId, title) {
-  const { data, error } = await supabaseClient.from("files").select("content, thumbnail_url").eq("id", fileId).single();
+  const { data, error } = await supabaseClient
+    .from("files")
+    .select("content")
+    .eq("id", fileId)
+    .single();
+
   if (error) return alert("Gagal membuka file: " + error.message);
 
   const popup = document.createElement("div");
   popup.className = "notepad-modal";
+
   popup.innerHTML = `
     <div class="notepad-box">
-      ${data.thumbnail_url ? `<img src="${data.thumbnail_url}" class="note-thumb">` : ""}
       <h3>📝 ${title}</h3>
-      <div id="noteContent" class="preview" spellcheck="false">${autoLink(data?.content || "")}</div>
+
+      <div id="noteContent" class="preview" spellcheck="false">
+        ${autoLink(data?.content || "")}
+      </div>
+
       <div class="note-buttons">
         <button id="editBtn">Edit</button>
         <button id="saveBtn">Save</button>
@@ -127,6 +136,7 @@ async function openNotepad(fileId, title) {
       </div>
     </div>
   `;
+
   document.body.appendChild(popup);
 
   const contentDiv = popup.querySelector("#noteContent");
@@ -137,39 +147,43 @@ async function openNotepad(fileId, title) {
 
   let editing = false;
 
-  editBtn.addEventListener("click", () => {
+  editBtn.onclick = () => {
     editing = true;
     contentDiv.contentEditable = "true";
     contentDiv.classList.remove("preview");
     contentDiv.innerText = contentDiv.innerText;
     contentDiv.focus();
-  });
+  };
 
-  saveBtn.addEventListener("click", async () => {
-    if (!editing) return alert("Aktifkan mode edit terlebih dahulu.");
+  saveBtn.onclick = async () => {
+    if (!editing) return alert("Aktifkan mode edit dulu.");
     const newContent = contentDiv.innerText;
+
     const { error: updateError } = await supabaseClient
       .from("files")
       .update({ content: newContent })
       .eq("id", fileId);
 
     if (updateError) return alert("❌ Gagal menyimpan: " + updateError.message);
+
     alert("✅ Konten berhasil disimpan!");
+
     contentDiv.contentEditable = "false";
     contentDiv.classList.add("preview");
     contentDiv.innerHTML = autoLink(newContent);
     editing = false;
-  });
+  };
 
-  previewBtn.addEventListener("click", () => {
+  previewBtn.onclick = () => {
     contentDiv.contentEditable = "false";
     contentDiv.classList.add("preview");
     contentDiv.innerHTML = autoLink(contentDiv.innerText);
     editing = false;
-  });
+  };
 
-  closeBtn.addEventListener("click", () => popup.remove());
+  closeBtn.onclick = () => popup.remove();
 }
+
 
 // ====== CONTEXT MENU (RIGHT CLICK / HOLD) ======
 function addContextInteraction(el, item) {
