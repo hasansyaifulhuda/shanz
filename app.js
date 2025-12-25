@@ -1,4 +1,4 @@
-// ========== app.js (Mode Guest dengan Grid Thumbnail) ==========
+// ========== app.js (Guest Mode + Global Search) ==========
 
 const supabase = window.supabaseClient;
 
@@ -7,17 +7,29 @@ const backBtn = document.getElementById("backBtn");
 const nextBtn = document.getElementById("nextBtn");
 const searchInput = document.getElementById("searchInput");
 
+// cache folder aktif
+let allFolders = [];
+let allFiles = [];
+
+// cache GLOBAL untuk search
+let globalFolders = [];
+let globalFiles = [];
+
 let currentFolderId = null;
 let folderStack = [];
 let forwardStack = [];
 
-// ===== Muat Konten Publik =====
+// ===== Muat Konten Publik (berdasarkan folder aktif) =====
 async function loadPublic() {
-  explorer.innerHTML = "<p>Memuat konten publik...</p>";
+  explorer.innerHTML = "<p>Memuat konten...</p>";
 
   try {
     let folderQuery = supabase.from("folders").select("*").is("deleted_at", null);
-    let fileQuery = supabase.from("files").select("*").eq("status", "published").is("deleted_at", null);
+    let fileQuery = supabase
+      .from("files")
+      .select("*")
+      .eq("status", "published")
+      .is("deleted_at", null);
 
     if (currentFolderId) {
       folderQuery = folderQuery.eq("parent_id", currentFolderId);
@@ -35,22 +47,43 @@ async function loadPublic() {
     folders.sort((a, b) => a.name.localeCompare(b.name));
     files.sort((a, b) => a.title.localeCompare(b.title));
 
-    renderTree(folders, files);
+    allFolders = folders || [];
+    allFiles = files || [];
+
+    renderTree(allFolders, allFiles);
   } catch (err) {
-    console.error("⚠️ Gagal memuat data publik:", err);
-    explorer.innerHTML = "<p style='color:red'>Gagal memuat konten.</p>";
+    console.error("Gagal load data:", err);
+    explorer.innerHTML = "<p style='color:red'>Gagal memuat data</p>";
   }
 }
 
-// ===== Tampilkan Folder & File =====
+// ===== Load SEMUA data (khusus untuk search global) =====
+async function loadGlobalData() {
+  const { data: folders } = await supabase
+    .from("folders")
+    .select("*")
+    .is("deleted_at", null);
+
+  const { data: files } = await supabase
+    .from("files")
+    .select("*")
+    .eq("status", "published")
+    .is("deleted_at", null);
+
+  globalFolders = folders || [];
+  globalFiles = files || [];
+}
+
+// ===== Render Folder & File =====
 function renderTree(folders, files) {
   explorer.innerHTML = "";
 
-  if ((!folders || folders.length === 0) && (!files || files.length === 0)) {
-    explorer.innerHTML = "<p>📂 Folder kosong.</p>";
+  if (folders.length === 0 && files.length === 0) {
+    explorer.innerHTML = "<p>📂 Folder kosong</p>";
     return;
   }
 
+  // render folder
   folders.forEach((f) => {
     const el = document.createElement("div");
     el.className = "folder";
@@ -65,91 +98,132 @@ function renderTree(folders, files) {
     explorer.appendChild(el);
   });
 
+  // render file (GRID GAMBAR SAJA)
   files.forEach((f) => {
     const el = document.createElement("div");
-
-    if (f.thumbnail_url) {
-      el.className = "file-card";
-      el.innerHTML = `
-        <div class="thumb-wrapper">
-          <img src="${f.thumbnail_url}" alt="${f.title}" class="file-thumb" />
-        </div>
-        <div class="file-title">${f.title}</div>
-      `;
-    } else {
-      el.className = "file";
-      el.innerHTML = `📝 ${f.title}`;
-    }
-
+    el.className = "file-card";
+    el.innerHTML = `
+      <div class="thumb-wrapper">
+        <img src="${f.thumbnail_url || ""}" class="file-thumb" />
+      </div>
+    `;
     el.onclick = () => openFileGuest(f.id, f.title);
     explorer.appendChild(el);
   });
 }
 
-// ===== Auto-Link di Konten File =====
+// ===== Auto Link =====
 function autoLink(text) {
   if (!text) return "";
-  const urlRegex = /(https?:\/\/[^\s]+|www\.[^\s]+)/g;
-  return text.replace(urlRegex, (url) => {
-    let href = url.startsWith("http") ? url : "https://" + url;
-    return `<a href="${href}" target="_blank" rel="noopener noreferrer">${url}</a>`;
-  });
+  return text.replace(
+    /(https?:\/\/[^\s]+|www\.[^\s]+)/g,
+    (url) => {
+      const href = url.startsWith("http") ? url : "https://" + url;
+      return `<a href="${href}" target="_blank">${url}</a>`;
+    }
+  );
 }
 
-// ===== Popup Notepad (Guest) =====
+// ===== Popup File =====
 async function openFileGuest(fileId, title) {
-  const { data, error } = await supabase.from("files").select("content").eq("id", fileId).single();
-  if (error) return alert("Gagal membuka file: " + error.message);
+  const { data, error } = await supabase
+    .from("files")
+    .select("content")
+    .eq("id", fileId)
+    .single();
+
+  if (error) return alert("Gagal membuka file");
 
   const popup = document.createElement("div");
   popup.className = "notepad-modal";
   popup.innerHTML = `
     <div class="notepad-box">
-      <h3>📝 ${title}</h3>
-      <div id="noteContent" class="preview">${autoLink(data?.content || "")}</div>
+      <h3>${title}</h3>
+      <div id="noteContent" class="preview">${autoLink(
+        data?.content || ""
+      )}</div>
       <div class="note-buttons">
         <button id="closeBtn">Close</button>
       </div>
     </div>
   `;
+
   document.body.appendChild(popup);
-  popup.querySelector("#closeBtn").addEventListener("click", () => popup.remove());
+  popup.querySelector("#closeBtn").onclick = () => popup.remove();
 }
 
-// ===== Navigasi Folder =====
+// ===== Navigasi =====
 function updateNavButtons() {
   backBtn.disabled = folderStack.length === 0;
   nextBtn.disabled = forwardStack.length === 0;
 }
 
 backBtn?.addEventListener("click", () => {
-  if (folderStack.length > 0) {
+  if (folderStack.length) {
     forwardStack.push(currentFolderId);
-    currentFolderId = folderStack.pop() || null;
+    currentFolderId = folderStack.pop();
     loadPublic();
     updateNavButtons();
   }
 });
 
 nextBtn?.addEventListener("click", () => {
-  if (forwardStack.length > 0) {
+  if (forwardStack.length) {
     folderStack.push(currentFolderId);
-    currentFolderId = forwardStack.pop() || null;
+    currentFolderId = forwardStack.pop();
     loadPublic();
     updateNavButtons();
   }
 });
 
-// ===== Pencarian =====
+// ===== SEARCH GLOBAL =====
 searchInput?.addEventListener("input", (e) => {
-  const query = e.target.value.toLowerCase();
-  const items = document.querySelectorAll(".folder, .file, .file-card");
-  items.forEach((item) => {
-    const name = item.textContent.toLowerCase();
-    item.style.display = name.includes(query) ? "" : "none";
+  const query = e.target.value.toLowerCase().trim();
+
+  // kosong → balik normal
+  if (!query) {
+    loadPublic();
+    return;
+  }
+
+  const folders = globalFolders.filter((f) =>
+    f.name.toLowerCase().includes(query)
+  );
+
+  const files = globalFiles.filter((f) =>
+    f.title.toLowerCase().includes(query)
+  );
+
+  explorer.innerHTML = "";
+
+  folders.forEach((f) => {
+    const el = document.createElement("div");
+    el.className = "folder";
+    el.textContent = "📁 " + f.name;
+    el.onclick = () => {
+      currentFolderId = f.id;
+      loadPublic();
+    };
+    explorer.appendChild(el);
+  });
+
+  files.forEach((f) => {
+    const el = document.createElement("div");
+    el.className = "file-card";
+    el.innerHTML = `
+      <div class="thumb-wrapper">
+        <img src="${f.thumbnail_url || ""}" class="file-thumb" />
+      </div>
+    `;
+    el.onclick = () => {
+      currentFolderId = f.folder_id;
+      loadPublic().then(() => openFileGuest(f.id, f.title));
+    };
+    explorer.appendChild(el);
   });
 });
 
-// ===== Inisialisasi =====
+// ===== INIT =====
 loadPublic();
+loadGlobalData();
 updateNavButtons();
