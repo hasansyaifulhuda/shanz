@@ -5,8 +5,93 @@
 <meta name="viewport" content="width=400, user-scalable=no">
   <title>SHANNN</title>
   <link rel="stylesheet" href="style.css">
-  <link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#0d6efd">
+  <style>
+    header {
+      background: #111;
+      color: white;
+      padding: 10px 15px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: relative;
+      flex-wrap: wrap;
+      transition: all 0.3s ease;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 1.4em;
+      font-weight: bold;
+    }
+
+    #navArea {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    #navArea button {
+      background: #007bff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      padding: 8px 10px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+
+    #navArea button:hover {
+      background: #0056b3;
+    }
+
+    /* Kolom pencarian */
+    #searchBar {
+      display: none;
+      width: 100%;
+      background: #111;
+      padding: 10px;
+      transition: all 0.3s ease;
+    }
+
+    #searchBar.active {
+      display: block;
+      animation: fadeIn 0.2s ease;
+    }
+
+    #searchInput {
+      width: 100%;
+      padding: 8px;
+      border-radius: 5px;
+      border: none;
+      font-size: 16px;
+    }
+
+    /* PC mode - inline search */
+    @media (min-width: 768px) {
+      #searchBar {
+        display: block !important;
+        background: transparent;
+        width: auto;
+        padding: 0;
+        margin-left: 10px;
+      }
+      #searchInput {
+        width: 200px;
+        font-size: 15px;
+        border: none;
+        border-radius: 5px;
+        padding: 6px 8px;
+      }
+      #searchInput:focus {
+        outline: 2px solid #007bff;
+      }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
 </head>
 <body>
   <header>
@@ -133,31 +218,6 @@
       document.getElementById("searchIcon").addEventListener("click", toggleSearchBar);
       setupSearch();
     });
-    <button id="installBtn">⬇</button>
-
-<script>
-let deferredPrompt;
-const installBtn = document.getElementById("installBtn");
-installBtn.style.display = "none";
-
-window.addEventListener("beforeinstallprompt", (e) => {
-  e.preventDefault();
-  deferredPrompt = e;
-  installBtn.style.display = "block";
-});
-
-installBtn.addEventListener("click", async () => {
-  if (!deferredPrompt) return;
-  deferredPrompt.prompt();
-  await deferredPrompt.userChoice;
-  deferredPrompt = null;
-  installBtn.style.display = "none";
-});
-
-if ("serviceWorker" in navigator) {
-  navigator.serviceWorker.register("service-worker.js");
-}
-
   </script>
 </body>
 </html>
