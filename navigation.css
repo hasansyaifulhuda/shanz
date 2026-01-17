@@ -1,0 +1,31 @@
+#navButtons {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+
+#navButtons button {
+  background: #222;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 6px 10px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+#navButtons button:hover:not(:disabled) {
+  background: #555;
+}
+
+#navButtons button:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+/* ====== CONTEXT MENU ====== */
+  .nav-buttons {
+    margin-top: 10px;
+  }

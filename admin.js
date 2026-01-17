@@ -1,359 +1,370 @@
-// ===== ADMIN MODE =====
 const explorer = document.getElementById("explorer");
 const logoutBtn = document.getElementById("logoutBtn");
-const fabBtn = document.getElementById("fab");
 const backBtn = document.getElementById("backBtn");
 const nextBtn = document.getElementById("nextBtn");
 
+/* ================= AUTH ================= */
 if (sessionStorage.getItem("isAdmin") !== "true") {
   alert("Akses ditolak. Anda belum login sebagai admin.");
-  window.location = "index.html";
+  location.href = "index.html";
 }
 
 logoutBtn?.addEventListener("click", () => {
   sessionStorage.removeItem("isAdmin");
-  window.location = "index.html";
+  location.href = "index.html";
 });
 
+/* ================= STATE ================= */
 let currentFolderId = null;
 let folderStack = [];
 let forwardStack = [];
 
-// ====== LOAD DATA ======
+/* ================= LOAD ================= */
 async function loadAll() {
   explorer.innerHTML = "<p>Memuat data...</p>";
 
-  try {
-    let folderQuery = supabaseClient.from("folders").select("*").is("deleted_at", null);
-    let fileQuery = supabaseClient.from("files").select("*").is("deleted_at", null);
+  let folderQuery = supabaseClient
+    .from("folders")
+    .select("*")
+    .is("deleted_at", null);
 
-    if (currentFolderId) {
-      folderQuery = folderQuery.eq("parent_id", currentFolderId);
-      fileQuery = fileQuery.eq("folder_id", currentFolderId);
-    } else {
-      folderQuery = folderQuery.is("parent_id", null);
-      fileQuery = fileQuery.is("folder_id", null);
-    }
+  let fileQuery = supabaseClient
+    .from("files")
+    .select("*")
+    .is("deleted_at", null);
 
-    const { data: folders } = await folderQuery;
-    const { data: files } = await fileQuery;
-
-    folders.sort((a, b) => a.name.localeCompare(b.name));
-    files.sort((a, b) => a.title.localeCompare(b.title));
-
-    renderTree(folders, files);
-  } catch (err) {
-    explorer.innerHTML = "<p style='color:red'>Gagal memuat data.</p>";
+  if (currentFolderId) {
+    folderQuery = folderQuery.eq("parent_id", currentFolderId);
+    fileQuery = fileQuery.eq("folder_id", currentFolderId);
+  } else {
+    folderQuery = folderQuery.is("parent_id", null);
+    fileQuery = fileQuery.is("folder_id", null);
   }
+
+  const { data: folders } = await folderQuery;
+  const { data: files } = await fileQuery;
+
+  renderTree(folders || [], files || []);
 }
 
-// ====== RENDER TREE ======
+/* ================= LONG PRESS ================= */
+function enableLongPress(el, callback) {
+  let timer;
+  el.addEventListener("touchstart", e => {
+    timer = setTimeout(() => callback(e), 500);
+  });
+  el.addEventListener("touchend", () => clearTimeout(timer));
+  el.addEventListener("touchmove", () => clearTimeout(timer));
+}
+
+/* ================= RENDER ================= */
 function renderTree(folders, files) {
   explorer.innerHTML = "";
 
-  folders.forEach((f) => {
-    f.type = "folder";
+  folders.forEach(f => {
     const el = document.createElement("div");
     el.className = "folder";
-    el.textContent = "📁 " + f.name;
-    el.dataset.id = f.id;
-    el.dataset.type = "folder";
+    el.innerHTML = `
+      <span class="folder-icon">
+        ${
+          f.thumbnail_url
+            ? `<img src="${f.thumbnail_url}" class="folder-thumb">`
+            : "📁"
+        }
+      </span>
+      <span class="folder-name">${f.name}</span>
+    `;
+
     el.onclick = () => {
       folderStack.push(currentFolderId);
       currentFolderId = f.id;
       forwardStack = [];
       loadAll();
-      updateNavButtons();
+      updateNav();
     };
-    addContextInteraction(el, f);
+
+    addContext(el, f, "folder");
+    enableLongPress(el, e => showContextMenu(el, f, "folder", e));
     explorer.appendChild(el);
   });
 
-  // FILES
-  files.forEach((f) => {
-    f.type = "file";
+  files.forEach(f => {
     const el = document.createElement("div");
-    el.dataset.id = f.id;
-    el.dataset.type = "file";
+    el.className = f.thumbnail_url ? "file-card" : "file";
 
-    // punya cover → tampil grid thumbnail
-    if (f.thumbnail_url) {
-      el.className = "file-card";
-      el.innerHTML = `
-        <div class="thumb-wrapper">
-          <img src="${f.thumbnail_url}" alt="${f.title}" class="file-thumb" />
-        </div>
-        <div class="file-title">${f.title}</div>
-      `;
-    } else {
-      // tanpa cover → list biasa
-      el.className = "file";
-      el.textContent = "📝 " + f.title;
-    }
+    el.innerHTML = f.thumbnail_url
+      ? `<div class="thumb-wrapper">
+           <img src="${f.thumbnail_url}" class="file-thumb">
+         </div>
+         <div class="file-title">${f.title}</div>`
+      : `📝 ${f.title}`;
 
     el.onclick = () => openNotepad(f.id, f.title);
-    addContextInteraction(el, f);
+    addContext(el, f, "file");
+    enableLongPress(el, e => showContextMenu(el, f, "file", e));
     explorer.appendChild(el);
   });
 }
 
-// ====== AUTO LINK (buat preview link aktif) ======
-function autoLink(text) {
-  if (!text) return "";
-  const urlRegex = /(https?:\/\/[^\s]+|www\.[^\s]+)/g;
-  return text.replace(urlRegex, (url) => {
-    let href = url.startsWith("http") ? url : "https://" + url;
-    return `<a href="${href}" target="_blank" rel="noopener noreferrer">${url}</a>`;
-  });
-}
-
-// ====== NOTEPAD POPUP ======
-async function openNotepad(fileId, title) {
-  const { data, error } = await supabaseClient
-    .from("files")
-    .select("content")
-    .eq("id", fileId)
-    .single();
-
-  if (error) return alert("Gagal membuka file: " + error.message);
-
-  const popup = document.createElement("div");
-  popup.className = "notepad-modal";
-
-  popup.innerHTML = `
-    <div class="notepad-box">
-      <h3>📝 ${title}</h3>
-
-      <div id="noteContent" class="preview" spellcheck="false">
-        ${autoLink(data?.content || "")}
-      </div>
-
-      <div class="note-buttons">
-        <button id="editBtn">Edit</button>
-        <button id="saveBtn">Save</button>
-        <button id="previewBtn">Preview</button>
-        <button id="closeBtn">Close</button>
-      </div>
-    </div>
-  `;
-
-  document.body.appendChild(popup);
-
-  const contentDiv = popup.querySelector("#noteContent");
-  const editBtn = popup.querySelector("#editBtn");
-  const saveBtn = popup.querySelector("#saveBtn");
-  const previewBtn = popup.querySelector("#previewBtn");
-  const closeBtn = popup.querySelector("#closeBtn");
-
-  let editing = false;
-
-  editBtn.onclick = () => {
-    editing = true;
-    contentDiv.contentEditable = "true";
-    contentDiv.classList.remove("preview");
-    contentDiv.innerText = contentDiv.innerText;
-    contentDiv.focus();
-  };
-
-  saveBtn.onclick = async () => {
-    if (!editing) return alert("Aktifkan mode edit dulu.");
-    const newContent = contentDiv.innerText;
-
-    const { error: updateError } = await supabaseClient
-      .from("files")
-      .update({ content: newContent })
-      .eq("id", fileId);
-
-    if (updateError) return alert("❌ Gagal menyimpan: " + updateError.message);
-
-    alert("✅ Konten berhasil disimpan!");
-
-    contentDiv.contentEditable = "false";
-    contentDiv.classList.add("preview");
-    contentDiv.innerHTML = autoLink(newContent);
-    editing = false;
-  };
-
-  previewBtn.onclick = () => {
-    contentDiv.contentEditable = "false";
-    contentDiv.classList.add("preview");
-    contentDiv.innerHTML = autoLink(contentDiv.innerText);
-    editing = false;
-  };
-
-  closeBtn.onclick = () => popup.remove();
-}
-
-
-// ====== CONTEXT MENU (RIGHT CLICK / HOLD) ======
-function addContextInteraction(el, item) {
-  if (sessionStorage.getItem("isAdmin") !== "true") return;
-
-  if (!document.getElementById("contextMenu")) {
-    const menu = document.createElement("div");
+/* ================= CONTEXT MENU ================= */
+function showContextMenu(el, item, type, e) {
+  let menu = document.getElementById("contextMenu");
+  if (!menu) {
+    menu = document.createElement("div");
     menu.id = "contextMenu";
     menu.className = "context-menu";
     document.body.appendChild(menu);
     document.addEventListener("click", () => (menu.style.display = "none"));
   }
 
-  const menu = document.getElementById("contextMenu");
+  menu.innerHTML = `
+    <button id="rename">✏️ Rename</button>
+    <button id="delete">🗑️ Delete</button>
+    <button id="icon">🖼️ Create icon</button>
+  `;
 
-  el.addEventListener("contextmenu", (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    showContextMenu(e.pageX, e.pageY, item);
-  });
+  const x = e.touches ? e.touches[0].pageX : e.pageX;
+  const y = e.touches ? e.touches[0].pageY : e.pageY;
+  menu.style.cssText = `display:flex;left:${x}px;top:${y}px`;
 
-  let holdTimer;
-  el.addEventListener("touchstart", (e) => {
-    holdTimer = setTimeout(() => {
-      e.preventDefault();
-      showContextMenu(e.touches[0].pageX, e.touches[0].pageY, item);
-    }, 600);
-  });
-  el.addEventListener("touchend", () => clearTimeout(holdTimer));
-
-  function showContextMenu(x, y, item) {
-    menu.innerHTML = `
-      <button id="renameBtn">✏️ Rename</button>
-      <button id="deleteBtn">🗑️ Delete</button>
-      ${item.type === "file" ? `<button id="iconBtn">🖼️ Create Icon</button>` : ""}
-    `;
-    menu.style.display = "flex";
-    menu.style.flexDirection = "column";
-    menu.style.left = `${x}px`;
-    menu.style.top = `${y}px`;
-
-    menu.querySelector("#renameBtn").onclick = () => renameItem(item);
-    menu.querySelector("#deleteBtn").onclick = () => deleteItem(item);
-    if (item.type === "file") {
-      menu.querySelector("#iconBtn").onclick = () => createIcon(item);
-    }
-  }
+  menu.querySelector("#rename").onclick = () => rename(item, type);
+  menu.querySelector("#delete").onclick = () => remove(item, type);
+  menu.querySelector("#icon").onclick = () => createIcon(item, type);
 }
 
-// ====== CREATE ICON (UPLOAD FILE) ======
-async function createIcon(item) {
+function addContext(el, item, type) {
+  el.oncontextmenu = e => {
+    e.preventDefault();
+    showContextMenu(el, item, type, e);
+  };
+}
+
+/* ================= CRUD ================= */
+async function rename(item, type) {
+  const name = prompt("Nama baru:", item.name || item.title);
+  if (!name) return;
+
+  await supabaseClient
+    .from(type === "folder" ? "folders" : "files")
+    .update(type === "folder" ? { name } : { title: name })
+    .eq("id", item.id);
+
+  loadAll();
+}
+
+async function remove(item, type) {
+  if (!confirm("Yakin hapus?")) return;
+
+  await supabaseClient
+    .from(type === "folder" ? "folders" : "files")
+    .update({ deleted_at: new Date().toISOString() })
+    .eq("id", item.id);
+
+  loadAll();
+}
+
+/* ================= ICON ================= */
+async function createIcon(item, type) {
   const input = document.createElement("input");
   input.type = "file";
   input.accept = "image/*";
-  input.style.display = "none";
-  document.body.appendChild(input);
 
-  input.click();
-
-  input.onchange = async (e) => {
-    const file = e.target.files[0];
+  input.onchange = async () => {
+    const file = input.files[0];
     if (!file) return;
 
-    const fileName = `${item.id}_${Date.now()}_${file.name}`;
-    const filePath = `thumbnails/${fileName}`;
+    const path = `thumbnails/${type}_${item.id}_${Date.now()}_${file.name}`;
 
-    try {
-      const { error: uploadError } = await supabaseClient.storage
-        .from("thumbnails")
-        .upload(filePath, file, { cacheControl: "3600", upsert: true });
+    await supabaseClient.storage
+      .from("thumbnails")
+      .upload(path, file, { upsert: true });
 
-      if (uploadError) throw uploadError;
+    const { data } = supabaseClient.storage
+      .from("thumbnails")
+      .getPublicUrl(path);
 
-      const { data: publicUrlData } = supabaseClient.storage.from("thumbnails").getPublicUrl(filePath);
-      const publicUrl = publicUrlData.publicUrl;
+    await supabaseClient
+      .from(type === "folder" ? "folders" : "files")
+      .update({ thumbnail_url: data.publicUrl })
+      .eq("id", item.id);
 
-      const { error: updateError } = await supabaseClient
-        .from("files")
-        .update({ thumbnail_url: publicUrl })
-        .eq("id", item.id);
-
-      if (updateError) throw updateError;
-      alert("✅ Icon berhasil ditambahkan!");
-      loadAll();
-    } catch (err) {
-      alert("❌ Gagal upload gambar: " + err.message);
-    }
-
-    input.remove();
+    loadAll();
   };
+
+  input.click();
+}
+//notepad//
+function renderContentToHTML(text) {
+  if (!text) return "";
+
+  // escape HTML
+  let safe = text
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
+
+  // linkify
+  safe = safe.replace(
+    /(https?:\/\/[^\s<]+)/g,
+    `<a href="$1" target="_blank">$1</a>`
+  );
+
+  // newline -> <br>
+  return safe.replace(/\n/g, "<br>");
 }
 
-// ====== RENAME ======
-async function renameItem(item) {
-  const newName = prompt(`Nama baru untuk ${item.name || item.title}:`, item.name || item.title);
-  if (!newName || newName === item.name || newName === item.title) return;
 
-  const table = item.type === "folder" ? "folders" : "files";
-  const field = item.type === "folder" ? "name" : "title";
+async function openNotepad(id, title) {
+  const { data } = await supabaseClient
+    .from("files")
+    .select("content")
+    .eq("id", id)
+    .single();
 
-  const { error } = await supabaseClient.from(table).update({ [field]: newName }).eq("id", item.id);
-  if (error) alert("Gagal rename: " + error.message);
-  else loadAll();
-}
+  const modal = document.createElement("div");
+  modal.className = "notepad-modal";
 
-// ====== DELETE ======
-async function deleteItem(item) {
-  if (!confirm(`Yakin ingin menghapus ${item.name || item.title}?`)) return;
-  const table = item.type === "folder" ? "folders" : "files";
-  const { error } = await supabaseClient.from(table).update({ deleted_at: new Date().toISOString() }).eq("id", item.id);
-  if (error) alert("Gagal menghapus: " + error.message);
-  else loadAll();
-}
+  modal.innerHTML = `
+    <div class="notepad-box">
+      <h3>📝 ${title}</h3>
 
-// ====== FAB ======
-fabBtn?.addEventListener("click", () => {
-  const menu = document.createElement("div");
-  menu.className = "fab-menu";
-  menu.innerHTML = `
-    <button id="addFolderBtn" title="Folder Baru">📁</button>
-    <button id="addFileBtn" title="File Baru">📝</button>
+      <div class="notepad-view"></div>
+
+      <textarea class="notepad-editor" style="display:none;"></textarea>
+
+      <div class="notepad-actions">
+        <button class="btn-edit">Edit</button>
+        <button class="btn-save" style="display:none;">Save</button>
+        <button class="btn-close">Close</button>
+      </div>
+    </div>
   `;
-  document.body.appendChild(menu);
 
-  const closeMenu = (e) => {
-    if (!menu.contains(e.target) && e.target !== fabBtn) {
-      menu.remove();
-      document.removeEventListener("click", closeMenu);
-    }
+  document.body.appendChild(modal);
+
+  const view = modal.querySelector(".notepad-view");
+  const editor = modal.querySelector(".notepad-editor");
+  const btnEdit = modal.querySelector(".btn-edit");
+  const btnSave = modal.querySelector(".btn-save");
+  const btnClose = modal.querySelector(".btn-close");
+
+  // VIEW MODE — 1:1 dengan textarea
+const raw = data?.content || "";
+
+view.innerHTML = raw
+  .replace(/&/g, "&amp;")
+  .replace(/</g, "&lt;")
+  .replace(/>/g, "&gt;")
+  .replace(/\n/g, "<br>")
+  .replace(
+    /(https?:\/\/[^\s<]+)/g,
+    `<a href="$1" target="_blank">$1</a>`
+  );
+function renderTextPreserveFormat(text) {
+  if (!text) return "";
+
+  // escape HTML dulu (AMAN)
+  let escaped = text
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
+
+  // ubah URL jadi <a>
+  escaped = escaped.replace(
+    /(https?:\/\/[^\s]+)/g,
+    '<a href="$1" target="_blank">$1</a>'
+  );
+
+  // preserve newline
+  return escaped.replace(/\n/g, "<br>");
+}
+
+
+
+  editor.value = data?.content || "";
+
+  btnEdit.onclick = () => {
+    view.style.display = "none";
+    editor.style.display = "block";
+    btnEdit.style.display = "none";
+    btnSave.style.display = "inline-block";
   };
-  setTimeout(() => document.addEventListener("click", closeMenu), 10);
 
-  document.getElementById("addFolderBtn").addEventListener("click", async () => {
-    const nama = prompt("Nama folder baru:");
-    if (!nama) return;
-    await supabaseClient.from("folders").insert([{ name: nama, parent_id: currentFolderId }]);
-    loadAll();
-  });
+  btnSave.onclick = async () => {
+    const newContent = editor.value;
 
-  document.getElementById("addFileBtn").addEventListener("click", async () => {
-    const judul = prompt("Judul file baru:");
-    if (!judul) return;
-    await supabaseClient.from("files").insert([{ title: judul, content: "", folder_id: currentFolderId, status: "published" }]);
-    loadAll();
-  });
+    await supabaseClient
+      .from("files")
+      .update({ content: newContent })
+      .eq("id", id);
+
+    view.innerHTML = newContent.replace(
+      /(https?:\/\/[^\s]+)/g,
+      `<a href="$1" target="_blank">$1</a>`
+    );
+
+    editor.style.display = "none";
+    view.style.display = "block";
+    btnSave.style.display = "none";
+    btnEdit.style.display = "inline-block";
+  };
+
+  btnClose.onclick = () => modal.remove();
+}
+
+/* ================= FAB MENU ================= */
+const fabMain = document.getElementById("fab-main");
+const fabMenu = document.getElementById("fab-menu");
+
+fabMain?.addEventListener("click", () => {
+  fabMenu.classList.toggle("show");
 });
 
-// ====== NAVIGATION ======
-function updateNavButtons() {
-  backBtn.disabled = folderStack.length === 0;
-  nextBtn.disabled = forwardStack.length === 0;
+document.getElementById("fab-folder")?.addEventListener("click", async () => {
+  const name = prompt("Nama folder:");
+  if (name) {
+    await supabaseClient.from("folders").insert({
+      name,
+      parent_id: currentFolderId
+    });
+    loadAll();
+  }
+});
+
+document.getElementById("fab-file")?.addEventListener("click", async () => {
+  const title = prompt("Judul file:");
+  if (title) {
+    await supabaseClient.from("files").insert({
+      title,
+      content: "",
+      folder_id: currentFolderId
+    });
+    loadAll();
+  }
+});
+
+
+/* ================= NAV (SAFE) ================= */
+function updateNav() {
+  if (backBtn) backBtn.disabled = !folderStack.length;
+  if (nextBtn) nextBtn.disabled = !forwardStack.length;
 }
 
 backBtn?.addEventListener("click", () => {
-  if (folderStack.length > 0) {
-    forwardStack.push(currentFolderId);
-    currentFolderId = folderStack.pop() || null;
-    loadAll();
-    updateNavButtons();
-  }
+  if (!folderStack.length) return;
+  forwardStack.push(currentFolderId);
+  currentFolderId = folderStack.pop();
+  loadAll();
+  updateNav();
 });
 
 nextBtn?.addEventListener("click", () => {
-  if (forwardStack.length > 0) {
-    folderStack.push(currentFolderId);
-    currentFolderId = forwardStack.pop() || null;
-    loadAll();
-    updateNavButtons();
-  }
+  if (!forwardStack.length) return;
+  folderStack.push(currentFolderId);
+  currentFolderId = forwardStack.pop();
+  loadAll();
+  updateNav();
 });
 
 loadAll();
-updateNavButtons();
+updateNav();

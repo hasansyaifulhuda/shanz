@@ -1,0 +1,19 @@
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.97); }
+  to { opacity: 1; transform: scale(1); }
+}
+@keyframes scaleIn {
+  from { transform: scale(0.9); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+/* FIX ALIGN INPUT */
+@keyframes scaleIn {
+  from { transform: scale(0.95); opacity: 0; }
+  to   { transform: scale(1); opacity: 1; }
+}
+/* HILANGKAN BAR HITAM TANPA MENGGANTI WARNA */
+.file-title {
+    display: none !important;
+}
+
+/* Hilangkan background hitam bawaan card */

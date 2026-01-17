@@ -2,20 +2,29 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8">
-<meta name="viewport" content="width=400, user-scalable=no">
+  <meta name="viewport" content="width=400, user-scalable=no">
   <title>SHANNN</title>
-  <link rel="icon" type="image/x-icon" href="favicon.ico">
-  <link rel="stylesheet" href="style.css">
+
+  <!-- CSS LAMA (TETAP) -->
+  <link rel="stylesheet" href="base.css">
+  <link rel="stylesheet" href="layout-header.css">
+  <link rel="stylesheet" href="layout-main.css">
+  <link rel="stylesheet" href="buttons.css">
+  <link rel="stylesheet" href="navigation.css">
+  <link rel="stylesheet" href="cards-grid.css">
+  <link rel="stylesheet" href="context-menu.css">
+  <link rel="stylesheet" href="notepad.css">
+  <link rel="stylesheet" href="search.css">
+  <link rel="stylesheet" href="animations.css">
+  <link rel="stylesheet" href="responsive-mobile.css">
+  <link rel="stylesheet" href="responsive-desktop.css">
+  <link rel="stylesheet" href="admin.css">
+
+
 </head>
 <body>
-  <script>
-    if (sessionStorage.getItem("isAdmin") !== "true") {
-      alert("Akses ditolak, silakan login dulu.");
-      window.location = "index.html";
-    }
-  </script>
 
-  <header class="admin-header">
+<header class="admin-header">
   <div class="header-left">
     <h1>SHANNN</h1>
   </div>
@@ -30,12 +39,31 @@
   </div>
 </header>
 
+<main id="explorer"></main>
 
-  <main id="explorer"></main>
-  <div id="fab" class="fab">+</div>
+<body class="admin">
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="supabase.js"></script>
-  <script src="admin.js"></script>
+<!-- =====================
+     FAB (BARU)
+     ===================== -->
+<div id="fab-container">
+  <button id="fab-main" class="fab-main">
+    <i class="fa-solid fa-plus">+</i>
+  </button>
+
+  <div id="fab-menu" class="fab-menu">
+    <button class="fab-item" id="fab-folder">
+      <i class="fa-solid fa-folder-plus">📁</i>
+    </button>
+    <button class="fab-item" id="fab-file">
+      <i class="fa-solid fa-file-circle-plus">📄</i>
+    </button>
+  </div>
+</div>
+
+<!-- SCRIPT LAMA (TETAP) -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase.js"></script>
+<script src="admin.js"></script>
 </body>
 </html>

@@ -4,107 +4,43 @@
   <meta charset="UTF-8">
 <meta name="viewport" content="width=400, user-scalable=no">
   <title>SHANNN</title>
-  <link rel="stylesheet" href="style.css">
-  <style>
-    header {
-      background: #111;
-      color: white;
-      padding: 10px 15px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      position: relative;
-      flex-wrap: wrap;
-      transition: all 0.3s ease;
-    }
+  <link rel="stylesheet" href="base.css">
+<link rel="stylesheet" href="layout-header.css">
+<link rel="stylesheet" href="layout-main.css">
 
-    h1 {
-      margin: 0;
-      font-size: 1.4em;
-      font-weight: bold;
-    }
+<link rel="stylesheet" href="buttons.css">
+<link rel="stylesheet" href="navigation.css">
 
-    #navArea {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
+<link rel="stylesheet" href="cards-grid.css">
+<link rel="stylesheet" href="fab.css">
+<link rel="stylesheet" href="context-menu.css">
 
-    #navArea button {
-      background: #007bff;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      padding: 8px 10px;
-      cursor: pointer;
-      font-size: 16px;
-    }
+<link rel="stylesheet" href="notepad.css">
+<link rel="stylesheet" href="modal-login.css">
 
-    #navArea button:hover {
-      background: #0056b3;
-    }
+<link rel="stylesheet" href="search.css">
+<link rel="stylesheet" href="animations.css">
 
-    /* Kolom pencarian */
-    #searchBar {
-      display: none;
-      width: 100%;
-      background: #111;
-      padding: 10px;
-      transition: all 0.3s ease;
-    }
-
-    #searchBar.active {
-      display: block;
-      animation: fadeIn 0.2s ease;
-    }
-
-    #searchInput {
-      width: 100%;
-      padding: 8px;
-      border-radius: 5px;
-      border: none;
-      font-size: 16px;
-    }
-
-    /* PC mode - inline search */
-    @media (min-width: 768px) {
-      #searchBar {
-        display: block !important;
-        background: transparent;
-        width: auto;
-        padding: 0;
-        margin-left: 10px;
-      }
-      #searchInput {
-        width: 200px;
-        font-size: 15px;
-        border: none;
-        border-radius: 5px;
-        padding: 6px 8px;
-      }
-      #searchInput:focus {
-        outline: 2px solid #007bff;
-      }
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(-10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-  </style>
+<link rel="stylesheet" href="responsive-mobile.css">
+<link rel="stylesheet" href="responsive-desktop.css">
+<link rel="stylesheet" href="admin.css">
 </head>
 <body>
   <header>
     <h1 id="secretTitle">SHANNN</h1>
-    <div id="navArea">
-      <button id="backBtn" title="Kembali">⬅️</button>
-      <button id="nextBtn" title="Maju">➡️</button>
-      <button id="searchIcon" title="Cari">🔍</button>
-      <div id="searchBar">
-        <input type="text" id="searchInput" placeholder="Cari folder atau file...">
-      </div>
-    </div>
-  </header>
+
+  <div class="header-right">
+    <button id="backBtn">←</button>
+    <button id="nextBtn">→</button>
+
+    <input
+      type="text"
+      id="searchInput"
+      placeholder="Cari folder atau file..."
+    />
+  </div>
+</header>
+
 
   <main id="explorer"></main>
 
@@ -113,111 +49,99 @@
  <script type="module" src="app.js"></script>
 
   <script>
-    // ========== Modal Login Rahasia ==========
-    function showLoginModal() {
-      document.querySelectorAll(".modal").forEach(m => m.remove());
-      const modal = document.createElement("div");
-      modal.className = "modal";
-      modal.innerHTML = `
-  <div class="modal-content">
-    <h3>Masuk Admin</h3>
-    <form id="loginForm" autocomplete="off">
-      <input type="password" id="pass" placeholder="Masukkan password admin" required>
-      <div class="modal-actions">
-        <button type="submit" class="btn-primary">Masuk</button>
-        <button type="button" id="cancelBtn" class="btn-secondary">Batal</button>
+  function showLoginModal() {
+    document.querySelectorAll(".modal").forEach(m => m.remove());
+    const modal = document.createElement("div");
+    modal.className = "modal";
+    modal.innerHTML = `
+      <div class="modal-content">
+        <h3>Masuk Admin</h3>
+        <form id="loginForm" autocomplete="off">
+          <input type="password" id="pass" placeholder="Masukkan password admin" required>
+          <div class="modal-actions">
+            <button type="submit" class="btn-primary">Masuk</button>
+            <button type="button" id="cancelBtn" class="btn-secondary">Batal</button>
+          </div>
+        </form>
       </div>
-    </form>
-  </div>
-  `;
-      document.body.appendChild(modal);
-      modal.querySelector("#cancelBtn").onclick = () => modal.remove();
-      modal.querySelector("#loginForm").onsubmit = async (e) => {
-        e.preventDefault();
-        const pw = document.getElementById("pass").value.trim();
-        if (!pw) return alert("Masukkan password dulu!");
-        try {
-          const { data, error } = await supabaseClient.rpc("verify_admin", { pass_input: pw });
-          if (error) throw error;
-          if (data === true) {
-            sessionStorage.setItem("isAdmin", "true");
-            alert("✅ Login berhasil!");
-            window.location = "admin.html";
-          } else {
-            alert("❌ Password salah!");
-          }
-        } catch (err) {
-          alert("Login gagal: " + err.message);
-        }
-      };
-    }
-
-    // ========== Fungsi Pencarian ==========
-    function toggleSearchBar() {
-      // Hanya untuk HP
-      if (window.innerWidth < 768) {
-        const searchBar = document.getElementById("searchBar");
-        searchBar.classList.toggle("active");
-        const input = document.getElementById("searchInput");
-        if (searchBar.classList.contains("active")) {
-          input.focus();
+    `;
+    document.body.appendChild(modal);
+    modal.querySelector("#cancelBtn").onclick = () => modal.remove();
+    modal.querySelector("#loginForm").onsubmit = async (e) => {
+      e.preventDefault();
+      const pw = document.getElementById("pass").value.trim();
+      if (!pw) return alert("Masukkan password dulu!");
+      try {
+        const { data, error } = await supabaseClient.rpc("verify_admin", { pass_input: pw });
+        if (error) throw error;
+        if (data === true) {
+          sessionStorage.setItem("isAdmin", "true");
+          alert("✅ Login berhasil!");
+          location.href = "admin.html";
         } else {
-          input.value = "";
-          showAllItems();
+          alert("❌ Password salah!");
         }
+      } catch (err) {
+        alert("Login gagal: " + err.message);
       }
-    }
+    };
+  }
 
-    function showAllItems() {
-      document.querySelectorAll(".folder, .file").forEach(el => el.style.display = "");
-    }
-
-    function setupSearch() {
+  function toggleSearchBar() {
+    if (window.innerWidth < 768) {
       const input = document.getElementById("searchInput");
-
-      input.addEventListener("input", () => {
-        const keyword = input.value.toLowerCase();
-
-        // pastikan folder & file dua-duanya difilter
-        const allItems = document.querySelectorAll(".folder, .file");
-        if (allItems.length === 0) return; // aman kalau belum render
-
-        allItems.forEach(el => {
-          const text = el.textContent.toLowerCase();
-          el.style.display = text.includes(keyword) ? "" : "none";
-        });
-      });
+      if (!input) return;
+      input.classList.toggle("active");
+      input.classList.contains("active") ? input.focus() : (input.value = "");
     }
+  }
 
-    // ========== Shortcut & Event ==========
-    window.addEventListener("load", () => {
-      const title = document.getElementById("secretTitle");
-      let tapCount = 0;
-      let tapTimer = null;
+  function setupSearch() {
+    const input = document.getElementById("searchInput");
+    if (!input) return;
 
-      // Ctrl+l untuk login
-      document.addEventListener("keydown", (e) => {
-        if (e.ctrlKey && e.key.toLowerCase() === "l") {
-          e.preventDefault();
-          showLoginModal();
-        }
+    input.addEventListener("input", () => {
+      const keyword = input.value.toLowerCase();
+      document.querySelectorAll(".folder, .file").forEach(el => {
+        el.style.display = el.textContent.toLowerCase().includes(keyword) ? "" : "none";
       });
+    });
+  }
 
-      // Klik 5x judul untuk login (HP)
+  window.addEventListener("load", () => {
+    const title = document.getElementById("secretTitle");
+    let tapCount = 0;
+    let tapTimer = null;
+
+    document.addEventListener("keydown", (e) => {
+      if (e.ctrlKey && e.key.toLowerCase() === "l") {
+        e.preventDefault();
+        showLoginModal();
+      }
+    });
+
+    if (title) {
       title.addEventListener("click", () => {
         tapCount++;
         clearTimeout(tapTimer);
-        tapTimer = setTimeout(() => tapCount = 0, 1000);
+        tapTimer = setTimeout(() => (tapCount = 0), 1000);
         if (tapCount >= 5) {
           tapCount = 0;
           showLoginModal();
         }
       });
+    }
 
-      // Klik ikon pencarian
-      document.getElementById("searchIcon").addEventListener("click", toggleSearchBar);
-      setupSearch();
-    });
+    const searchIcon = document.getElementById("searchIcon");
+    if (searchIcon) {
+      searchIcon.addEventListener("click", toggleSearchBar);
+    }
+
+    setupSearch();
+  });
+</script>
+
+
   </script>
 </body>
 </html>

@@ -1,0 +1,98 @@
+/* =============================== */
+/*  RESPONSIVE MOBILE (HP)         */
+/* =============================== */
+
+@media (max-width: 600px) {
+
+  /* HEADER */
+  header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+
+  .admin-header {
+    flex-direction: row;
+    align-items: center;
+  }
+
+  /* SEARCH */
+  #searchInput {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  /* GRID FILES */
+  #explorer {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 10px !important;
+    padding: 10px !important;
+  }
+
+  /* CARD */
+  .file-card {
+    width: 100% !important;
+    height: auto !important;
+    aspect-ratio: 3 / 4;
+    border-radius: 12px !important;
+    overflow: hidden !important;
+    background: #fff !important;
+
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+
+  .thumb-wrapper {
+    width: 100% !important;
+    height: 100% !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: none !important;
+  }
+
+  .file-thumb {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: contain !important;
+  }
+
+  /* TITLE / BAR HITAM */
+  .file-title {
+    display: none !important;
+  }
+
+  /* FAB */
+  .fab {
+    width: 52px;
+    height: 52px;
+    font-size: 30px;
+    bottom: 20px;
+    right: 20px;
+  }
+
+  .fab-menu {
+    bottom: 80px;
+    right: 28px;
+  }
+
+  /* MODAL / NOTEPAD */
+  .notepad-box {
+    width: 100%;
+    max-width: 100%;
+    padding: 16px;
+  }
+
+  #noteContent {
+    min-height: 220px;
+    max-height: 60vh;
+  }
+
+  /* CARD UMUM (LAINNYA) */
+  .card {
+    max-width: 90%;
+  }
+
+}

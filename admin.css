@@ -1,0 +1,18 @@
+  .admin-header > * {
+    display: flex;
+    align-items: center;
+  }
+
+    .admin-header {
+    flex-direction: row;        /* 🔥 samakan dengan guest */
+    align-items: center;
+  }
+
+.admin-header {
+  background: #111;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
