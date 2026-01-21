@@ -123,6 +123,11 @@ function autoLink(text) {
     }
   );
 }
+// ===== FORMAT TEXT (*bold*) =====
+function formatText(text) {
+  if (!text) return "";
+  return text.replace(/\*(.*?)\*/g, "<strong>$1</strong>");
+}
 
 // ===== Popup File =====
 async function openFileGuest(fileId, title) {
@@ -139,9 +144,9 @@ async function openFileGuest(fileId, title) {
   popup.innerHTML = `
     <div class="notepad-box">
       <h3>${title}</h3>
-      <div id="noteContent" class="preview">${autoLink(
-        data?.content || ""
-      )}</div>
+     <div id="noteContent" class="preview">
+  ${formatText(autoLink(data?.content || ""))}
+</div>
       <div class="note-buttons">
         <button id="closeBtn">Close</button>
       </div>
