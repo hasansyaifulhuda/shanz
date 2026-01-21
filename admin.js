@@ -19,6 +19,14 @@ let currentFolderId = null;
 let folderStack = [];
 let forwardStack = [];
 
+// ====== NORMALIZE TEXT (FIX BUG SPASI AWAL) ======
+function normalizeText(text) {
+  return (text || "")
+    .replace(/\u00A0/g, " ")
+    .replace(/\r\n/g, "\n")
+    .replace(/^\n+/, "");
+}
+
 // ====== LOAD DATA ======
 async function loadAll() {
   explorer.innerHTML = "<p>Memuat data...</p>";
@@ -69,14 +77,12 @@ function renderTree(folders, files) {
     explorer.appendChild(el);
   });
 
-  // FILES
   files.forEach((f) => {
     f.type = "file";
     const el = document.createElement("div");
     el.dataset.id = f.id;
     el.dataset.type = "file";
 
-    // punya cover → tampil grid thumbnail
     if (f.thumbnail_url) {
       el.className = "file-card";
       el.innerHTML = `
@@ -86,7 +92,6 @@ function renderTree(folders, files) {
         <div class="file-title">${f.title}</div>
       `;
     } else {
-      // tanpa cover → list biasa
       el.className = "file";
       el.textContent = "📝 " + f.title;
     }
@@ -97,7 +102,7 @@ function renderTree(folders, files) {
   });
 }
 
-// ====== AUTO LINK (buat preview link aktif) ======
+// ====== AUTO LINK ======
 function autoLink(text) {
   if (!text) return "";
   const urlRegex = /(https?:\/\/[^\s]+|www\.[^\s]+)/g;
@@ -105,6 +110,11 @@ function autoLink(text) {
     let href = url.startsWith("http") ? url : "https://" + url;
     return `<a href="${href}" target="_blank" rel="noopener noreferrer">${url}</a>`;
   });
+}
+// ===== FORMAT TEXT (*bold*) =====
+function formatText(text) {
+  if (!text) return "";
+  return text.replace(/\*(.*?)\*/g, "<strong>$1</strong>");
 }
 
 // ====== NOTEPAD POPUP ======
@@ -120,13 +130,16 @@ async function openNotepad(fileId, title) {
   const popup = document.createElement("div");
   popup.className = "notepad-modal";
 
+  const cleanContent = normalizeText(data?.content || "");
+
   popup.innerHTML = `
     <div class="notepad-box">
       <h3>📝 ${title}</h3>
 
       <div id="noteContent" class="preview" spellcheck="false">
-        ${autoLink(data?.content || "")}
-      </div>
+  ${formatText(autoLink(data?.content || ""))}
+</div>
+
 
       <div class="note-buttons">
         <button id="editBtn">Edit</button>
@@ -151,13 +164,14 @@ async function openNotepad(fileId, title) {
     editing = true;
     contentDiv.contentEditable = "true";
     contentDiv.classList.remove("preview");
-    contentDiv.innerText = contentDiv.innerText;
+    contentDiv.innerText = normalizeText(contentDiv.innerText);
     contentDiv.focus();
   };
 
   saveBtn.onclick = async () => {
     if (!editing) return alert("Aktifkan mode edit dulu.");
-    const newContent = contentDiv.innerText;
+
+    let newContent = normalizeText(contentDiv.innerText);
 
     const { error: updateError } = await supabaseClient
       .from("files")
@@ -170,22 +184,21 @@ async function openNotepad(fileId, title) {
 
     contentDiv.contentEditable = "false";
     contentDiv.classList.add("preview");
-    contentDiv.innerHTML = autoLink(newContent);
+    contentDiv.innerHTML = formatText(autoLink(newContent));
     editing = false;
   };
 
   previewBtn.onclick = () => {
     contentDiv.contentEditable = "false";
     contentDiv.classList.add("preview");
-    contentDiv.innerHTML = autoLink(contentDiv.innerText);
+    contentDiv.innerHTML = formatText(autoLink(contentDiv.innerText));
     editing = false;
   };
 
   closeBtn.onclick = () => popup.remove();
 }
 
-
-// ====== CONTEXT MENU (RIGHT CLICK / HOLD) ======
+// ====== CONTEXT MENU ======
 function addContextInteraction(el, item) {
   if (sessionStorage.getItem("isAdmin") !== "true") return;
 
@@ -204,15 +217,6 @@ function addContextInteraction(el, item) {
     e.stopPropagation();
     showContextMenu(e.pageX, e.pageY, item);
   });
-
-  let holdTimer;
-  el.addEventListener("touchstart", (e) => {
-    holdTimer = setTimeout(() => {
-      e.preventDefault();
-      showContextMenu(e.touches[0].pageX, e.touches[0].pageY, item);
-    }, 600);
-  });
-  el.addEventListener("touchend", () => clearTimeout(holdTimer));
 
   function showContextMenu(x, y, item) {
     menu.innerHTML = `
@@ -233,7 +237,7 @@ function addContextInteraction(el, item) {
   }
 }
 
-// ====== CREATE ICON (UPLOAD FILE) ======
+// ====== CREATE ICON ======
 async function createIcon(item) {
   const input = document.createElement("input");
   input.type = "file";
@@ -251,21 +255,19 @@ async function createIcon(item) {
     const filePath = `thumbnails/${fileName}`;
 
     try {
-      const { error: uploadError } = await supabaseClient.storage
+      await supabaseClient.storage
         .from("thumbnails")
         .upload(filePath, file, { cacheControl: "3600", upsert: true });
 
-      if (uploadError) throw uploadError;
+      const { data } = supabaseClient.storage
+        .from("thumbnails")
+        .getPublicUrl(filePath);
 
-      const { data: publicUrlData } = supabaseClient.storage.from("thumbnails").getPublicUrl(filePath);
-      const publicUrl = publicUrlData.publicUrl;
-
-      const { error: updateError } = await supabaseClient
+      await supabaseClient
         .from("files")
-        .update({ thumbnail_url: publicUrl })
+        .update({ thumbnail_url: data.publicUrl })
         .eq("id", item.id);
 
-      if (updateError) throw updateError;
       alert("✅ Icon berhasil ditambahkan!");
       loadAll();
     } catch (err) {
@@ -279,23 +281,26 @@ async function createIcon(item) {
 // ====== RENAME ======
 async function renameItem(item) {
   const newName = prompt(`Nama baru untuk ${item.name || item.title}:`, item.name || item.title);
-  if (!newName || newName === item.name || newName === item.title) return;
+  if (!newName) return;
 
   const table = item.type === "folder" ? "folders" : "files";
   const field = item.type === "folder" ? "name" : "title";
 
-  const { error } = await supabaseClient.from(table).update({ [field]: newName }).eq("id", item.id);
-  if (error) alert("Gagal rename: " + error.message);
-  else loadAll();
+  await supabaseClient.from(table).update({ [field]: newName }).eq("id", item.id);
+  loadAll();
 }
 
 // ====== DELETE ======
 async function deleteItem(item) {
   if (!confirm(`Yakin ingin menghapus ${item.name || item.title}?`)) return;
+
   const table = item.type === "folder" ? "folders" : "files";
-  const { error } = await supabaseClient.from(table).update({ deleted_at: new Date().toISOString() }).eq("id", item.id);
-  if (error) alert("Gagal menghapus: " + error.message);
-  else loadAll();
+  await supabaseClient
+    .from(table)
+    .update({ deleted_at: new Date().toISOString() })
+    .eq("id", item.id);
+
+  loadAll();
 }
 
 // ====== FAB ======
@@ -303,32 +308,30 @@ fabBtn?.addEventListener("click", () => {
   const menu = document.createElement("div");
   menu.className = "fab-menu";
   menu.innerHTML = `
-    <button id="addFolderBtn" title="Folder Baru">📁</button>
-    <button id="addFileBtn" title="File Baru">📝</button>
+    <button id="addFolderBtn">📁</button>
+    <button id="addFileBtn">📝</button>
   `;
   document.body.appendChild(menu);
 
-  const closeMenu = (e) => {
-    if (!menu.contains(e.target) && e.target !== fabBtn) {
-      menu.remove();
-      document.removeEventListener("click", closeMenu);
-    }
-  };
-  setTimeout(() => document.addEventListener("click", closeMenu), 10);
+  setTimeout(() => {
+    document.addEventListener("click", (e) => {
+      if (!menu.contains(e.target) && e.target !== fabBtn) menu.remove();
+    }, { once: true });
+  });
 
-  document.getElementById("addFolderBtn").addEventListener("click", async () => {
+  document.getElementById("addFolderBtn").onclick = async () => {
     const nama = prompt("Nama folder baru:");
     if (!nama) return;
     await supabaseClient.from("folders").insert([{ name: nama, parent_id: currentFolderId }]);
     loadAll();
-  });
+  };
 
-  document.getElementById("addFileBtn").addEventListener("click", async () => {
+  document.getElementById("addFileBtn").onclick = async () => {
     const judul = prompt("Judul file baru:");
     if (!judul) return;
-    await supabaseClient.from("files").insert([{ title: judul, content: "", folder_id: currentFolderId, status: "published" }]);
+    await supabaseClient.from("files").insert([{ title: judul, content: "", folder_id: currentFolderId }]);
     loadAll();
-  });
+  };
 });
 
 // ====== NAVIGATION ======
@@ -338,22 +341,19 @@ function updateNavButtons() {
 }
 
 backBtn?.addEventListener("click", () => {
-  if (folderStack.length > 0) {
-    forwardStack.push(currentFolderId);
-    currentFolderId = folderStack.pop() || null;
-    loadAll();
-    updateNavButtons();
-  }
+  if (!folderStack.length) return;
+  forwardStack.push(currentFolderId);
+  currentFolderId = folderStack.pop() || null;
+  loadAll();
+  updateNavButtons();
 });
 
 nextBtn?.addEventListener("click", () => {
-  if (forwardStack.length > 0) {
-    folderStack.push(currentFolderId);
-    currentFolderId = forwardStack.pop() || null;
-    loadAll();
-    updateNavButtons();
-  }
+  if (!forwardStack.length) return;
+  folderStack.push(currentFolderId);
+  currentFolderId = forwardStack.pop() || null;
+  loadAll();
+  updateNavButtons();
 });
-
 loadAll();
 updateNavButtons();
