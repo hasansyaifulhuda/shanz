@@ -74,7 +74,6 @@ async function loadGlobalData() {
   globalFiles = files || [];
 }
 
-// ===== Render Folder & File =====
 function renderTree(folders, files) {
   explorer.innerHTML = "";
 
@@ -98,19 +97,31 @@ function renderTree(folders, files) {
     explorer.appendChild(el);
   });
 
-  // render file (GRID GAMBAR SAJA)
+  // render file (GAMBAR / TEKS)
   files.forEach((f) => {
     const el = document.createElement("div");
-    el.className = "file-card";
-    el.innerHTML = `
-      <div class="thumb-wrapper">
-        <img src="${f.thumbnail_url || ""}" class="file-thumb" />
-      </div>
-    `;
+
+    const hasThumbnail =
+      typeof f.thumbnail_url === "string" &&
+      f.thumbnail_url.trim() !== "";
+
+    if (hasThumbnail) {
+      el.className = "file-card";
+      el.innerHTML = `
+        <div class="thumb-wrapper">
+          <img src="${f.thumbnail_url}" class="file-thumb" />
+        </div>
+      `;
+    } else {
+      el.className = "file";
+      el.textContent = "📝 " + f.title;
+    }
+
     el.onclick = () => openFileGuest(f.id, f.title);
     explorer.appendChild(el);
   });
 }
+
 
 // ===== Auto Link =====
 function autoLink(text) {
@@ -213,21 +224,32 @@ searchInput?.addEventListener("input", (e) => {
   });
 
   files.forEach((f) => {
-    const el = document.createElement("div");
+  const el = document.createElement("div");
+
+  const hasThumbnail =
+    typeof f.thumbnail_url === "string" &&
+    f.thumbnail_url.trim() !== "";
+
+  if (hasThumbnail) {
     el.className = "file-card";
     el.innerHTML = `
       <div class="thumb-wrapper">
-        <img src="${f.thumbnail_url || ""}" class="file-thumb" />
+        <img src="${f.thumbnail_url}" class="file-thumb" />
       </div>
     `;
-    el.onclick = () => {
-      currentFolderId = f.folder_id;
-      loadPublic().then(() => openFileGuest(f.id, f.title));
-    };
-    explorer.appendChild(el);
-  });
-});
+  } else {
+    el.className = "file";
+    el.textContent = "📝 " + f.title;
+  }
 
+  el.onclick = () => {
+    currentFolderId = f.folder_id;
+    loadPublic().then(() => openFileGuest(f.id, f.title));
+  };
+
+  explorer.appendChild(el);
+});
+});
 // ===== INIT =====
 loadPublic();
 loadGlobalData();
