@@ -551,18 +551,24 @@ pre code {
 }
 @media (max-width: 768px) {
 
+  /* rapatkan halaman */
   body {
     margin: 0;
+  }
+
+  /* konten naik, tidak jauh */
+  #content {
     padding: 12px;
   }
 
-  html {
-    font-size: 16px;
+  /* sidebar aman */
+  #sidebar {
+    width: 240px;
   }
 
-  img {
-    max-width: 100%;
-    height: auto;
+  /* teks tidak mengecil */
+  html {
+    font-size: 16px;
   }
 
 }
