@@ -1,0 +1,551 @@
+* {
+  box-sizing: border-box;
+  font-family: Arial, sans-serif;
+}
+
+body {
+  margin: 0;
+  background: #f2f2f2;
+}
+
+/* TOPBAR */
+.topbar {
+  height: 56px;
+  background: #0425aa;
+  color: white;
+  display: flex;
+  align-items: center;
+  padding: 0 12px;
+}
+
+.hamburger {
+  font-size: 22px;
+  background: none;
+  border: none;
+  color: white;
+  cursor: pointer;
+}
+
+.logo {
+  font-weight: bold;
+  margin-left: 12px;
+}
+
+.top-actions {
+  margin-left: auto;
+}
+
+.top-actions button {
+  margin-left: 8px;
+}
+
+/* LAYOUT */
+.layout {
+  display: flex;
+}
+
+#overlay {
+  position: fixed;
+  inset: 0;
+  display: none;
+}
+
+/* SIDEBAR */
+#sidebar {
+  width: 260px;
+  background: #fff;
+  border-right: 1px solid #ddd;
+  padding: 10px;
+  position: fixed;
+  top: 56px;
+  bottom: 0;
+  left: -260px;
+  transition: 0.25s;
+  overflow-y: auto;
+  z-index: 1000;
+}
+
+#sidebar.open {
+  left: 0;
+}
+
+#tree {
+  list-style: none;
+  padding-left: 0;
+}
+
+#tree li {
+  padding: 6px;
+  cursor: pointer;
+}
+
+#tree li.folder {
+  font-weight: bold;
+}
+
+#tree ul {
+  padding-left: 16px;
+}
+
+/* CONTENT */
+#content {
+  padding: 20px;
+  width: 100%;
+}
+
+.empty {
+  color: #777;
+}
+
+/* EDIT BLOCKS */
+input.title-input,
+textarea.desc-input,
+textarea.code-input {
+  width: 100%;
+  margin-bottom: 12px;
+  padding: 8px;
+  font-size: 16px;
+}
+
+textarea.code-input {
+  min-height: 200px;
+  font-family: Consolas, monospace;
+}
+
+/* CODE VIEW */
+pre {
+  background: #f8f8f8;
+  padding: 12px;
+  border-left: 4px solid #04aa6d;
+}
+
+/* FAB */
+#fab {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: #04aa6d;
+  color: white;
+  font-size: 28px;
+  border: none;
+  cursor: pointer;
+  z-index: 10000;
+}
+
+/* FAB MENU */
+.fab-menu {
+  position: fixed;
+  bottom: 90px;
+  right: 24px;
+  display: none;
+  flex-direction: column;
+  gap: 8px;
+  z-index: 10000;   
+}
+
+.fab-menu button {
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: 1px solid #ddd;
+  background: white;
+  cursor: pointer;
+}
+/* ===== SIDEBAR ACTIONS (ADMIN) ===== */
+.sidebar-actions {
+  position: sticky;
+  bottom: 0;
+  background: #ffffff;
+  padding: 10px;
+  border-top: 1px solid #ddd;
+  display: flex;
+  gap: 8px;
+}
+
+.sidebar-actions button {
+  flex: 1;
+  background: #04aa6d;
+  color: white;
+  border: none;
+  padding: 8px 0;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.sidebar-actions button:hover {
+  background: #03945f;
+}
+/* ===== CONTEXT MENU ===== */
+.context-menu {
+  position: fixed;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,.15);
+  padding: 6px;
+  z-index: 9999;
+  min-width: 120px;
+}
+
+.context-menu button {
+  width: 100%;
+  padding: 8px 10px;
+  margin: 4px 0;
+  border: none;
+  border-radius: 6px;
+  background: #0aa86f;
+  color: #fff;
+  font-size: 14px;
+  cursor: pointer; /* 🔥 INI YANG KAMU MINTA */
+  text-align: left;
+}
+
+.context-menu button:hover {
+  background: #078a5c;
+}
+
+.context-menu button.delete {
+  background: #e74c3c;
+}
+
+.context-menu button.delete:hover {
+  background: #c0392b;
+}
+/* ===== DESKRIPSI: TEKS <...> MERAH ===== */
+#content p {
+  white-space: pre-wrap;
+}
+
+#content p span.angle {
+  color: #ff4d4f;
+  font-weight: bold;
+}
+/* ===== LOGIN MODAL ===== */
+.login-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 20000;
+}
+
+.login-modal {
+  background: #ffffff;
+  width: 300px;
+  padding: 15px;
+  border-radius: 10px;
+  box-shadow: 0 10px 30px rgba(0,0,0,.25);
+}
+
+.login-modal h2 {
+  margin-top: 0;
+  margin-bottom: 16px;
+  font-size: 18px;
+}
+
+.login-modal label {
+  font-size: 14px;
+  display: block;
+  margin-bottom: 6px;
+}
+
+.login-modal input {
+  width: 100%;
+  padding: 8px;
+  font-size: 14px;
+  margin-bottom: 12px;
+}
+
+.login-error {
+  color: #e74c3c;
+  font-size: 13px;
+  margin-bottom: 12px;
+}
+
+.login-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.btn-cancel {
+  background: #ccc;
+  border: none;
+  padding: 6px 12px;
+  cursor: pointer;
+}
+
+.btn-login {
+  background: #04aa6d;
+  color: white;
+  border: none;
+  padding: 6px 14px;
+  cursor: pointer;
+}
+/* ===== CODE BLOCK ===== */
+.code-wrapper {
+  position: relative;
+  margin: 16px 0;
+}
+
+/* === CODE BLOCK (FINAL FIX) === */
+.code-wrapper pre {
+  background: #f1f5f9 !important; 
+  border: 3px solid #07080a;
+  border-radius: 10px;
+  padding: 16px;
+  overflow-x: auto;
+}
+
+/* code text */
+.code-wrapper code {
+  background: transparent !important;
+  color: #111827;
+}
+/* ===============================
+   LOGIN MODAL (CLEAN & MODERN)
+   =============================== */
+
+/* Overlay gelap + blur */
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+/* Hidden state */
+.hidden {
+  display: none;
+}
+
+/* Modal box */
+.login-modal {
+  background: #ffffff;
+  width: 360px;
+  padding: 24px 26px;
+  border-radius: 14px;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.25);
+  animation: loginPopup 0.25s ease-out;
+}
+
+/* Title */
+.login-modal h2 {
+  margin: 0 0 16px;
+  font-size: 20px;
+  font-weight: 600;
+  color: #111827;
+}
+
+/* Password input */
+.login-modal input {
+  width: 100%;
+  padding: 10px 12px;
+  font-size: 14px;
+  border-radius: 8px;
+  border: 1px solid #cbd5e1;
+  outline: none;
+}
+
+.login-modal input:focus {
+  border-color: #2563eb;
+}
+
+/* Action buttons */
+.login-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 18px;
+}
+
+.btn-cancel {
+  background: #e5e7eb;
+  border: none;
+  padding: 6px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  color: #111827;
+}
+
+.btn-cancel:hover {
+  background: #d1d5db;
+}
+
+.btn-login {
+  background: #2563eb;
+  color: #ffffff;
+  border: none;
+  padding: 6px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.btn-login:hover {
+  background: #1d4ed8;
+}
+
+/* Animation */
+@keyframes loginPopup {
+  from {
+    transform: scale(0.95);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+
+/* COPY BUTTON */
+.copy-btn {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  font-size: 12px;
+  padding: 4px 8px;
+  border: 1px solid #d0d7de;
+  background: #ffffff;
+  cursor: pointer;
+  border-radius: 6px;
+}
+
+.copy-btn:hover {
+  background: #f0f0f0;
+}
+
+#content {
+  transition: margin-left 0.25s ease;
+}
+
+/* Saat sidebar terbuka, geser konten */
+#sidebar.open ~ #content,
+#sidebar.open ~ .layout #content {
+  margin-left: 260px; /* samakan dengan lebar sidebar */
+}
+
+/* Pastikan code block tidak ketiban */
+.code-wrapper {
+  position: relative;
+  z-index: 1;
+}
+/* ===== MENU ITEM ===== */
+.menu-item {
+  padding: 8px 12px;
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+/* ===== SAAT KURSOR MENEMPEL ===== */
+.menu-item:hover {
+  background-color: #0d6efd;
+  color: white;
+}
+
+/* ===== MENU AKTIF (SETELAH DIKLIK) ===== */
+.menu-item.active {
+  background-color: #084298;
+  color: white;
+}
+/* ===== ITEM DI SIDEBAR ===== */
+#tree li {
+  padding: 8px 12px;
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+/* ===== SAAT KURSOR MENEMPEL (HOVER) ===== */
+#tree li:hover {
+  background-color: #0d6efd; /* biru */
+  color: white;
+}
+
+/* ===== ITEM AKTIF (SETELAH DIKLIK) ===== */
+#tree li.active {
+  background-color: #084298; /* biru lebih gelap */
+  color: white;
+}
+/* === FIX CODE BLOCK BACKGROUND === */
+pre,
+pre code {
+  background: transparent !important;
+  padding: 0;
+  margin: 0;
+   font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 14px;
+  line-height: 1.6;
+}
+/* ===== LOGIN MODAL BUTTON UI FIX ===== */
+.login-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 18px;
+}
+
+#btnCancelLogin,
+#btnSubmitLogin {
+  min-width: 90px;
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: 500;
+  border-radius: 8px;
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s ease;
+}
+
+/* BATAL */
+#btnCancelLogin {
+  background: #e5e7eb;
+  color: #111827;
+}
+
+#btnCancelLogin:hover {
+  background: #d1d5db;
+}
+
+/* LOGIN */
+#btnSubmitLogin {
+  background: #2563eb;
+  color: #ffffff;
+}
+
+#btnSubmitLogin:hover {
+  background: #1d4ed8;
+}
+/* ===== FIX HEADER SAAT SCROLL ===== */
+.topbar {
+  position: sticky;      /* header nempel saat scroll */
+  top: 0;
+  z-index: 1000;         /* pastikan di atas konten */
+  background: #0b2a7a;   /* samakan dengan warna header */
+}
+
+/* kasih jarak supaya konten tidak ketutup header */
+#content {
+  margin-top: 56px;
+}
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+#content {
+  margin-top: 0px;
+}
+
+#content h1 {
+  margin-top: 0;
+}
