@@ -550,18 +550,19 @@ pre code {
   margin-top: 0;
 }
 @media (max-width: 768px) {
-      body {
-        padding: 10px;
-      }
 
-      .container {
-        width: 100%; /* lebar penuh HP */
-      }
+  body {
+    margin: 0;
+    padding: 12px;
+  }
 
-      .caption {
-        font-size: 18px; /* DIBESARKAN DI MOBILE */
-      }
+  html {
+    font-size: 16px;
+  }
 
-      .photo-card {
-        margin-bottom: 24px;}
-      }
+  img {
+    max-width: 100%;
+    height: auto;
+  }
+
+}
