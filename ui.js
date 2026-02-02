@@ -265,11 +265,16 @@ const setupCopyButtons = () => {
     document.querySelectorAll('.copy-btn').forEach(btn => {
         btn.addEventListener('click', async () => {
             try {
-                await navigator.clipboard.writeText(btn.dataset.code);
-                const t = btn.textContent;
+                const codeBlock = btn.closest('.code-body')?.querySelector('code');
+                if (!codeBlock) return;
+
+                const text = codeBlock.textContent; // ⬅️ AMBIL SEMUA ISI
+                await navigator.clipboard.writeText(text);
+
+                const old = btn.textContent;
                 btn.textContent = 'Copied!';
-                setTimeout(() => btn.textContent = t, 1500);
-            } catch {
+                setTimeout(() => btn.textContent = old, 1500);
+            } catch (e) {
                 btn.textContent = 'Failed';
                 setTimeout(() => btn.textContent = 'Copy', 1500);
             }
@@ -301,3 +306,4 @@ export const showConfirmDialog = (message, onConfirm) => {
 
     showModal('confirmModal');
 };
+
