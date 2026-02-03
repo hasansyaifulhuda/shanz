@@ -148,87 +148,66 @@ export const displayContents = (contents) => {
     const contentArea = document.getElementById('contentArea');
     if (!contentArea) return;
 
-    if (!contents || contents.length === 0) {
-        contentArea.innerHTML = `
-            <div class="empty-state">
-                <i class="fas fa-code"></i>
-                <p>Belum ada konten di halaman ini</p>
-            </div>`;
-        return;
-    }
-
-    const sorted = [...contents].sort(
-        (a, b) => new Date(a.created_at) - new Date(b.created_at)
-    );
-
     let html = '';
 
-    sorted.forEach(content => {
-        currentContentId = content.id;
+    contents.forEach(content => {
 
-        /* ===== DESCRIPTION (NO COPY) ===== */
+        // ===== DESCRIPTION =====
         if (content.description) {
             html += `
-                <div class="content-description code-block-container">
-                    <div class="code-body">
-                        <pre class="code-content">${escapeHtml(content.description)}</pre>
-                    </div>
-                    ${isAdmin() ? `
-                        <div class="code-actions">
-                            <button class="edit-content" data-content-id="${content.id}">
-                                <i class="fas fa-edit"></i> Edit
-                            </button>
-                            <button class="delete-content" data-content-id="${content.id}">
-                                <i class="fas fa-trash"></i> Hapus
-                            </button>
-                        </div>
-                    ` : ''}
+                <div class="content-description">
+                    ${escapeHtml(content.description)}
                 </div>
             `;
         }
 
-        /* ===== CODE BLOCKS ===== */
-        if (content.blocks?.length) {
-            const blocks = [...content.blocks].sort((a, b) => a.order - b.order);
+        // ===== BLOCKS =====
+        content.blocks?.forEach(block => {
 
-            blocks.forEach(block => {
-                if (block.type !== 'code') return;
+            // ⬇️ INI KUNCI NYA
+            const language = block.language || block.type || 'text';
 
-                html += `
-                    <div class="code-block-container">
-                        <div class="code-header">
-                            <span class="code-language">${escapeHtml(block.language)}</span>
+            html += `
+                <div class="code-block-container">
+
+                    <!-- HEADER (SELALU TERLIHAT) -->
+                    <div class="code-header">
+                        <span class="code-language">
+                            ${language.toUpperCase()}
+                        </span>
+
+                        <div class="code-actions">
+                            <button class="copy-btn">
+                                <i class="fa-regular fa-copy"></i>
+                            </button>
+
                             ${isAdmin() ? `
-                                <div class="code-actions">
-                                    <button class="edit-block" data-block-id="${block.id}">
-                                        <i class="fas fa-edit"></i> Edit
-                                    </button>
-                                    <button class="delete-block" data-block-id="${block.id}">
-                                        <i class="fas fa-trash"></i> Hapus
-                                    </button>
-                                </div>
+                                <button class="edit-block" data-block-id="${block.id}">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="delete-block" data-block-id="${block.id}">
+                                    <i class="fas fa-trash"></i>
+                                </button>
                             ` : ''}
                         </div>
-                        <div class="code-body">
-                            <pre class="language-${block.language}">
-<code class="language-${block.language}">
+                    </div>
+
+                    <!-- BODY -->
+                    <div class="code-body">
+                        <pre class="language-${language}">
+<code class="language-${language}">
 ${escapeHtml(block.value)}
 </code>
-</pre>
-                            <button class="copy-btn"
-                                    data-code="${escapeHtml(block.value)}">
-                                Copy
-                            </button>
-                        </div>
+                        </pre>
                     </div>
-                `;
-            });
-        }
+
+                </div>
+            `;
+        });
     });
 
     contentArea.innerHTML = html;
 
-    /* ===== IMPORTANT ===== */
     if (window.Prism) {
         Prism.highlightAll();
     }
@@ -264,19 +243,24 @@ const escapeHtml = (text) => {
 const setupCopyButtons = () => {
     document.querySelectorAll('.copy-btn').forEach(btn => {
         btn.addEventListener('click', async () => {
+            // Cari code terdekat dari container block
+            const container = btn.closest('.code-block-container');
+            if (!container) return;
+
+            const codeEl = container.querySelector('code');
+            if (!codeEl) return;
+
             try {
-                const codeBlock = btn.closest('.code-body')?.querySelector('code');
-                if (!codeBlock) return;
+                await navigator.clipboard.writeText(codeEl.textContent);
 
-                const text = codeBlock.textContent; // ⬅️ AMBIL SEMUA ISI
-                await navigator.clipboard.writeText(text);
-
-                const old = btn.textContent;
-                btn.textContent = 'Copied!';
-                setTimeout(() => btn.textContent = old, 1500);
-            } catch (e) {
-                btn.textContent = 'Failed';
-                setTimeout(() => btn.textContent = 'Copy', 1500);
+                // feedback
+                const old = btn.innerHTML;
+                btn.innerHTML = '<i class="fa-solid fa-check"></i>';
+                setTimeout(() => {
+                    btn.innerHTML = old;
+                }, 1200);
+            } catch (err) {
+                console.error('Copy gagal:', err);
             }
         });
     });

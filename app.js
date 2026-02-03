@@ -20,3 +20,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     
     console.log('Aplikasi Jurnal Coding telah diinisialisasi');
 });
+const refreshBtn = document.getElementById('btn-refresh');
+
+if (refreshBtn) {
+  refreshBtn.addEventListener('click', () => {
+    window.location.reload();
+  });
+}

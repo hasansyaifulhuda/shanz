@@ -26,10 +26,6 @@ export const validateContent = (description) => {
         errors.push('Deskripsi tidak boleh kosong');
     }
     
-    if (description && description.trim().length > 1000) {
-        errors.push('Deskripsi maksimal 1000 karakter');
-    }
-    
     return {
         isValid: errors.length === 0,
         errors: errors
@@ -45,10 +41,6 @@ export const validateCodeBlock = (language, value) => {
     
     if (!value || value.trim().length === 0) {
         errors.push('Kode tidak boleh kosong');
-    }
-    
-    if (value && value.trim().length > 5000) {
-        errors.push('Kode maksimal 5000 karakter');
     }
     
     return {
