@@ -148,66 +148,84 @@ export const displayContents = (contents) => {
     const contentArea = document.getElementById('contentArea');
     if (!contentArea) return;
 
+    if (!contents || contents.length === 0) {
+        contentArea.innerHTML = `
+            <div class="empty-state">
+                <i class="fas fa-code"></i>
+                <p>Belum ada konten di halaman ini</p>
+            </div>`;
+        return;
+    }
+
+    const sorted = [...contents].sort(
+        (a, b) => new Date(a.created_at) - new Date(b.created_at)
+    );
+
     let html = '';
 
-    contents.forEach(content => {
+    sorted.forEach(content => {
+        currentContentId = content.id;
 
-        // ===== DESCRIPTION =====
+        /* ===== DESCRIPTION (NO COPY) ===== */
         if (content.description) {
             html += `
-                <div class="content-description">
-                    ${escapeHtml(content.description)}
+                <div class="content-description code-block-container">
+                    <div class="code-body">
+                        <pre class="code-content">${escapeHtml(content.description)}</pre>
+                    </div>
+                    ${isAdmin() ? `
+                        <div class="code-actions">
+                            <button class="edit-content" data-content-id="${content.id}">
+                                <i class="fas fa-edit"></i> Edit
+                            </button>
+                            <button class="delete-content" data-content-id="${content.id}">
+                                <i class="fas fa-trash"></i> Hapus
+                            </button>
+                        </div>
+                    ` : ''}
                 </div>
             `;
         }
 
-        // ===== BLOCKS =====
-        content.blocks?.forEach(block => {
+        /* ===== CODE BLOCKS ===== */
+        if (content.blocks?.length) {
+            const blocks = [...content.blocks].sort((a, b) => a.order - b.order);
 
-            // ⬇️ INI KUNCI NYA
-            const language = block.language || block.type || 'text';
+            blocks.forEach(block => {
+                if (block.type !== 'code') return;
 
-            html += `
-                <div class="code-block-container">
-
-                    <!-- HEADER (SELALU TERLIHAT) -->
-                    <div class="code-header">
-                        <span class="code-language">
-                            ${language.toUpperCase()}
-                        </span>
-
-                        <div class="code-actions">
-                            <button class="copy-btn">
-                                <i class="fa-regular fa-copy"></i>
-                            </button>
-
+                html += `
+                    <div class="code-block-container">
+                        <div class="code-header">
+                            <span class="code-language">${escapeHtml(block.language)}</span>
                             ${isAdmin() ? `
-                                <button class="edit-block" data-block-id="${block.id}">
-                                    <i class="fas fa-edit"></i>
-                                </button>
-                                <button class="delete-block" data-block-id="${block.id}">
-                                    <i class="fas fa-trash"></i>
-                                </button>
+                                <div class="code-actions">
+                                    <button class="edit-block" data-block-id="${block.id}">
+                                        <i class="fas fa-edit"></i> Edit
+                                    </button>
+                                    <button class="delete-block" data-block-id="${block.id}">
+                                        <i class="fas fa-trash"></i> Hapus
+                                    </button>
+                                </div>
                             ` : ''}
                         </div>
+                        <div class="code-body">
+    <pre class="language-${block.language}">
+        <code class="language-${block.language}">${escapeHtml(block.value)}</code>
+    </pre>
+    <div class="code-footer">
+        <button class="copy-btn">Copy</button>
+    </div>
+</div>
                     </div>
-
-                    <!-- BODY -->
-                    <div class="code-body">
-                        <pre class="language-${language}">
-<code class="language-${language}">
-${escapeHtml(block.value)}
-</code>
-                        </pre>
-                    </div>
-
-                </div>
-            `;
-        });
+                `;
+            });
+        }
     });
 
     contentArea.innerHTML = html;
 
+    /* ===== IMPORTANT ===== */
     if (window.Prism) {
         Prism.highlightAll();
     }
@@ -242,27 +260,23 @@ const escapeHtml = (text) => {
 
 const setupCopyButtons = () => {
     document.querySelectorAll('.copy-btn').forEach(btn => {
-        btn.addEventListener('click', async () => {
-            // Cari code terdekat dari container block
-            const container = btn.closest('.code-block-container');
-            if (!container) return;
+        btn.onclick = async () => {
+            const codeEl = btn
+                .closest('.code-block-container')
+                ?.querySelector('code');
 
-            const codeEl = container.querySelector('code');
             if (!codeEl) return;
 
             try {
                 await navigator.clipboard.writeText(codeEl.textContent);
-
-                // feedback
-                const old = btn.innerHTML;
-                btn.innerHTML = '<i class="fa-solid fa-check"></i>';
-                setTimeout(() => {
-                    btn.innerHTML = old;
-                }, 1200);
-            } catch (err) {
-                console.error('Copy gagal:', err);
+                const oldText = btn.textContent;
+                btn.textContent = 'Copied!';
+                setTimeout(() => btn.textContent = oldText, 1200);
+            } catch {
+                btn.textContent = 'Failed';
+                setTimeout(() => btn.textContent = 'Copy', 1200);
             }
-        });
+        };
     });
 };
 

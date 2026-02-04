@@ -320,6 +320,7 @@ const setupContentEvents = () => {
         if (e.target.closest('.edit-content')) {
             const contentId = e.target.closest('.edit-content').dataset.contentId;
             editContentId = contentId;
+            // In real app, you would fetch the content and populate the form
             document.querySelector('#addContentModal h2').textContent = 'Edit Konten';
             showModal('addContentModal');
         }

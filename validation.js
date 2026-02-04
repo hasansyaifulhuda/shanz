@@ -9,10 +9,6 @@ export const validatePage = (title) => {
         errors.push('Judul halaman tidak boleh kosong');
     }
     
-    if (title && title.trim().length > 100) {
-        errors.push('Judul halaman maksimal 100 karakter');
-    }
-    
     return {
         isValid: errors.length === 0,
         errors: errors
@@ -25,7 +21,7 @@ export const validateContent = (description) => {
     if (!description || description.trim().length === 0) {
         errors.push('Deskripsi tidak boleh kosong');
     }
-    
+
     return {
         isValid: errors.length === 0,
         errors: errors

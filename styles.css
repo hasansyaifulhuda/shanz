@@ -667,101 +667,36 @@ body {
   word-break: break-word;     /* paksa pecah kata panjang */
   overflow-x: hidden;         /* MATIKAN scroll horizontal */
 }
-#btn-refresh {
-  background: transparent;
-  border: none;
-  color: white;
-  font-size: 18px;
-  cursor: pointer;
-  margin-right: 10px;
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 10px;
 }
-
-#btn-refresh:hover {
-  color: #4da3ff;
+/* ===== Horizontal Scrollbar untuk Code Block ===== */
+.code-body {
+    overflow-x: auto;
 }
-/* ===== Custom Scrollbar (Dark Theme) ===== */
 
 /* Chrome, Edge, Safari */
-::-webkit-scrollbar {
-  width: 10px;
-  height: 10px;
+.code-body::-webkit-scrollbar {
+    height: 8px;
 }
 
-::-webkit-scrollbar-track {
-  background: #1e1e1e; /* background web */
+.code-body::-webkit-scrollbar-track {
+    background: #444343;
 }
 
-::-webkit-scrollbar-thumb {
-  background-color: #3a3a3a; /* warna thumb */
-  border-radius: 8px;
-  border: 2px solid #1e1e1e;
+.code-body::-webkit-scrollbar-thumb {
+    background-color: #2d2c2c;
+    border-radius: 4px;
 }
 
-::-webkit-scrollbar-thumb:hover {
-  background-color: #555;
+.code-body::-webkit-scrollbar-thumb:hover {
+    background-color: #333;
 }
 
 /* Firefox */
-* {
-  scrollbar-width: thin;
-  scrollbar-color: #3a3a3a #1e1e1e;
-}
-/* ===== FIX COPY BUTTON VISIBILITY ===== */
-
-.code-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.code-actions {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-
-.code-actions .copy-btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-
-    width: 32px;
-    height: 32px;
-
-    background-color: var(--primary-color, #1f6feb);
-    color: #ffffff;
-
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-
-    z-index: 5;
-}
-
-.code-actions .copy-btn:hover {
-    background-color: #388bfd;
-}
-
-.code-actions .copy-btn i {
-    font-size: 14px;
-}
-/* FORCE COPY BUTTON VISIBLE */
-.copy-btn {
-  min-width: 60px;
-  height: 32px;
-  padding: 0 12px;
-
-  background: #007acc;
-  color: #fff;
-
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-
-  font-size: 12px;
-  font-weight: 600;
-}
-
-.copy-btn:hover {
-  background: #0094ff;
+.code-body {
+    scrollbar-color: #181818 #383737;
+    scrollbar-width: thin;
 }

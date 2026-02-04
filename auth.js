@@ -60,10 +60,14 @@ export const login = async (password) => {
         }
         
         if (data.user) {
-            setAdminMode(data.user);
-            hideModal('loginModal');
-            return true;
-        }
+    setAdminMode(data.user);
+    hideModal('loginModal');
+
+    // ⬇️ TAMBAHKAN INI
+    window.location.reload();
+
+    return true;
+}
         
         return false;
     } catch (error) {
@@ -80,8 +84,11 @@ export const logout = async () => {
     if (!supabase) return;
     
     try {
-        await supabase.auth.signOut();
-        setGuestMode();
+       await supabase.auth.signOut();
+setGuestMode();
+
+// ⬇️ TAMBAHKAN INI
+window.location.reload();
     } catch (error) {
         console.error('Logout error:', error);
     }
