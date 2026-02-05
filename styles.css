@@ -700,3 +700,8 @@ body {
     scrollbar-color: #181818 #383737;
     scrollbar-width: thin;
 }
+.mark-tag {
+  color: #e53935;
+  font-weight: 600;
+  font-family: monospace;
+}

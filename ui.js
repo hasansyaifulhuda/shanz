@@ -171,7 +171,7 @@ export const displayContents = (contents) => {
             html += `
                 <div class="content-description code-block-container">
                     <div class="code-body">
-                        <pre class="code-content">${escapeHtml(content.description)}</pre>
+                        <pre class="code-content">${renderDescriptionWithTags(content.description)}</pre>
                     </div>
                     ${isAdmin() ? `
                         <div class="code-actions">
@@ -305,3 +305,20 @@ export const showConfirmDialog = (message, onConfirm) => {
     showModal('confirmModal');
 };
 
+function renderDescriptionWithTags(text) {
+  if (!text) return '';
+
+  // 1. Escape HTML dulu
+  let escaped = text
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
+
+  // 2. Warnai teks di dalam < >
+  escaped = escaped.replace(
+    /&lt;([^&]+?)&gt;/g,
+    '<span class="mark-tag">&lt;$1&gt;</span>'
+  );
+
+  return escaped;
+}
