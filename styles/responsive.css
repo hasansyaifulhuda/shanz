@@ -1,0 +1,177 @@
+/* RESPONSIVE CSS */
+@media (max-width: 1024px) {
+    .watch-container {
+        grid-template-columns: 1fr;
+    }
+
+    .episode-sidebar {
+        position: static;
+        max-height: none;
+    }
+
+    .mobile-episode-toggle {
+        display: block;
+    }
+
+    .episode-sidebar.collapsed .episode-list-container,
+    .episode-sidebar.collapsed .season-selector,
+    .episode-sidebar.collapsed .load-more-btn {
+        display: none;
+    }
+
+    .grid-container {
+        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+        gap: 16px;
+    }
+}
+
+@media (max-width: 768px) {
+    .nav-menu {
+        display: none;
+    }
+
+    .hamburger {
+        display: flex;
+    }
+
+    .main-content {
+        padding: 12px;
+        padding-top: 76px;
+    }
+
+    .grid-container {
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        gap: 12px;
+    }
+
+    .section-title {
+        font-size: 1.2rem;
+    }
+
+    .video-title {
+        font-size: 1.1rem;
+    }
+
+    .modal {
+        width: 95%;
+        padding: 20px;
+    }
+
+    .admin-form-modal .form-row {
+        grid-template-columns: 1fr;
+    }
+
+    .category-tabs {
+        overflow-x: auto;
+        flex-wrap: nowrap;
+        padding-bottom: 8px;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .category-tab {
+        flex-shrink: 0;
+    }
+
+    .detail-header {
+        flex-direction: column;
+    }
+
+    .detail-poster {
+        width: 100% !important;
+        max-width: 300px;
+    }
+
+    .search-box {
+        max-width: 100%;
+    }
+
+    .header-actions .btn span.btn-text {
+        display: none;
+    }
+
+    .toast {
+        max-width: calc(100vw - 40px);
+    }
+}
+
+@media (max-width: 480px) {
+    .grid-container {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+    }
+
+    .site-header {
+        padding: 0 12px;
+    }
+
+    .logo-text {
+        font-size: 1.1rem;
+    }
+
+    .video-meta {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 4px;
+    }
+}
+
+/* =================================================
+   FIX RESPONSIVE HALAMAN DETAIL (MOBILE)
+   ================================================= */
+@media (max-width: 768px) {
+
+  /* layout utama detail (2 kolom → 1 kolom) */
+  .detail-layout,
+  .content-layout,
+  .content-detail,
+  .detail-container {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 12px;
+  }
+
+  /* poster / preview */
+  .detail-poster,
+  .poster,
+  .poster-box {
+    width: 100% !important;
+    max-width: none !important;
+    height: auto;
+  }
+
+  /* panel info kanan */
+  .detail-side,
+  .detail-info,
+  .info-panel {
+    width: 100% !important;
+    margin: 0 !important;
+  }
+
+  /* tombol admin (Edit, Hapus, +Ep) */
+  .admin-actions,
+  .admin-buttons {
+    display: flex !important;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .admin-actions button,
+  .admin-buttons button {
+    flex: 1 1 auto;
+  }
+
+  /* header detail (judul + badge) */
+  .detail-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+  }
+
+  /* season box */
+  .season-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+}
+

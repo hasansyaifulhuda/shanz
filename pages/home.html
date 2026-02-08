@@ -1,0 +1,29 @@
+<div class="page" id="homePage">
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;margin-bottom:20px;">
+        <h1 class="section-title" style="margin-bottom:0;" id="homeTitle">🎬 Semua Koleksi</h1>
+        <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+            <div class="search-box">
+                <span class="search-icon">🔍</span>
+                <input type="text" id="searchInput" placeholder="Cari judul..." oninput="UI.filterContent()">
+            </div>
+            <!-- ADMIN ONLY: Tombol ini TERSEMBUNYI di mode Guest -->
+            <button class="btn btn-primary btn-sm admin-only" onclick="Admin.showAddContentModal()">➕ Tambah Konten</button>
+        </div>
+    </div>
+    <!-- Label kategori aktif (muncul jika bukan "Semua") -->
+    <div id="activeCategoryLabel" style="display:none;"></div>
+    <div id="resumeBanner" style="display:none;padding:16px;background:linear-gradient(135deg,rgba(59,130,246,0.15),rgba(37,99,235,0.1));border:1px solid rgba(59,130,246,0.3);border-radius:var(--radius-md);margin-bottom:24px;cursor:pointer;" onclick="Player.resumeLastWatched()">
+        <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+            <span style="font-size:1.5rem;">▶️</span>
+            <div>
+                <p style="font-weight:700;color:var(--text-primary);">Lanjutkan Menonton</p>
+                <p id="resumeInfo" style="font-size:0.85rem;color:var(--text-secondary);"></p>
+            </div>
+        </div>
+    </div>
+    <div class="grid-container" id="contentGrid"></div>
+    <div class="empty-state" id="emptyState" style="display:none;">
+        <div class="icon">📭</div>
+        <p>Belum ada konten. Silakan login sebagai Admin untuk menambahkan.</p>
+    </div>
+</div>

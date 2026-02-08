@@ -1,0 +1,37 @@
+<div class="page" id="watchPage">
+    <button class="btn btn-secondary btn-sm mb-2" id="watchBackBtn" onclick="Router.goBackFromWatch()">← Kembali ke Detail</button>
+    <div class="watch-container">
+        <div class="player-section">
+            <div class="player-wrapper" id="playerWrapper">
+                <iframe id="videoPlayer" src="" allow="autoplay; fullscreen; encrypted-media; picture-in-picture" allowfullscreen></iframe>
+            </div>
+            <div class="video-info">
+                <h2 class="video-title" id="watchTitle"></h2>
+                <div class="video-meta" id="watchMeta"></div>
+                <div class="video-description" id="watchDesc"></div>
+            </div>
+            <div id="autoNextBanner" class="auto-next-banner" style="display:none;">
+                <p>⏭️ Episode berikutnya: <strong id="nextEpName"></strong></p>
+                <button class="btn btn-primary btn-sm" onclick="Player.playNextEpisode()">▶ Play Sekarang</button>
+            </div>
+        </div>
+        <div>
+            <button class="mobile-episode-toggle" onclick="UI.toggleEpisodeSidebar()">📋 Tampilkan/Sembunyikan Daftar Episode</button>
+            <div class="episode-sidebar" id="episodeSidebar">
+                <div class="sidebar-header">
+                    <span>📋 Daftar Episode</span>
+                    <span class="ep-count" id="epCount"></span>
+                </div>
+                <div class="season-selector" id="seasonSelector" style="display:none;">
+                    <select id="watchSeasonSelect" onchange="UI.changeWatchSeason(this.value)"></select>
+                </div>
+                <div class="episode-list-container" id="episodeListContainer"></div>
+                <button class="load-more-btn" id="loadMoreEpBtn" style="display:none;" onclick="UI.loadMoreEpisodes()">📥 Muat Lebih Banyak</button>
+                <!-- ADMIN ONLY: Tombol Tambah Episode di sidebar -->
+                <div class="admin-only" style="padding:12px;">
+                    <button class="btn btn-primary btn-sm" style="width:100%;" onclick="Admin.showAddEpisodeModal()">➕ Tambah Episode</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
