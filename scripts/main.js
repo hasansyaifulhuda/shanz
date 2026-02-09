@@ -1,7 +1,8 @@
 // MAIN.JS - Application entry point
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', async function() {
+    sessionStorage.removeItem('streambox_admin'); // AUTO LOGOUT SAAT REFRESH
     // Initialize data
-    Data.init();
+    await Data.init();
     
     // Check auth status
     Auth.updateUI();

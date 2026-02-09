@@ -67,7 +67,7 @@
     position: relative;
     display: flex;
     flex-direction: column;
-    max-width: 500px;
+    max-width: 280px;
 }
 
 .content-card:hover {
@@ -76,26 +76,19 @@
     box-shadow: 0 8px 30px rgba(59, 130, 246, 0.15);
 }
 
+/* POSTER: IKUT GAMBAR ASLI */
 .poster-container {
-    position: relative;
     width: 100%;
-    aspect-ratio: 1/1;
-    overflow: hidden;
-    background: var(--bg-tertiary);
+    background: transparent;
 }
 
 .poster-img {
     width: 100%;
-    height: 100%;
-    object-fit: cover;
-    object-position: center center;
+    height: auto;      /* KRITIS */
+    object-fit: initial;
     display: block;
-    transition: transform 0.3s ease;
 }
 
-.content-card:hover .poster-img {
-    transform: scale(1.03);
-}
 
 .poster-placeholder {
     display: flex;
@@ -168,3 +161,14 @@
 .mb-1 { margin-bottom: 8px; }
 .mb-2 { margin-bottom: 16px; }
 .mb-3 { margin-bottom: 24px; }
+
+@media (max-width: 480px) {
+    .content-card {
+        max-width: 100%;
+    }
+
+    .poster-img {
+        width: 100%;
+        height: auto;
+    }
+}

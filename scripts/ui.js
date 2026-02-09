@@ -2,12 +2,20 @@
 var UI = {
     currentCategory:'all', episodesRendered:0, EPISODES_PER_LOAD:15,
     setCategory: function(cat) {
-        this.currentCategory=cat;
-        var te=document.getElementById('homeTitle'),le=document.getElementById('activeCategoryLabel');
-        if(cat==='all'){te.textContent='🎬 Semua Koleksi';le.style.display='none';}
-        else{te.textContent=Utils.getCategoryIcon(cat)+' '+cat.charAt(0).toUpperCase()+cat.slice(1);le.style.display='block';le.innerHTML='<span class="active-category-label">'+Utils.getCategoryIcon(cat)+' Filter: '+cat.charAt(0).toUpperCase()+cat.slice(1)+' <span class="clear-filter" onclick="event.stopPropagation();Router.navigateCategory(\'all\')" title="Hapus filter">✕</span></span>';}
-        Router.updateNavActive(cat);
-    },
+    this.currentCategory = 'all'; // ❗ selalu all (filter dimatikan)
+
+    var te = document.getElementById('homeTitle'),
+        le = document.getElementById('activeCategoryLabel');
+
+    // Judul statis, tanpa filter
+    te.textContent = '🎬 Semua Koleksi';
+
+    // Label filter disembunyikan permanen
+    if (le) le.style.display = 'none';
+
+    Router.updateNavActive(cat); // nav tetap aktif (visual saja)
+},
+
     renderHome: function() {
         var q=document.getElementById('searchInput').value.trim(),cs;
         if(q){cs=Data.searchContents(q);if(this.currentCategory!=='all')cs=cs.filter(function(c){return c.category===UI.currentCategory;});}
@@ -27,10 +35,27 @@ var UI = {
     },
     filterContent: Utils.debounce(function(){UI.renderHome();},300),
     showResumeBanner: function() {
-        var r=Player.getResumeData(),b=document.getElementById('resumeBanner');
-        if(r){var c=Data.getContentById(r.contentId);if(c){var s=c.seasons[r.seasonIdx];var ep=s?s.episodes[r.epIdx]:null;if(ep){b.style.display='block';document.getElementById('resumeInfo').textContent=c.title+' — '+s.name+' — '+ep.title;return;}}}
-        b.style.display='none';
-    },
+    var r = Player.getResumeData(),
+        b = document.getElementById('resumeBanner');
+
+    if (r) {
+        var c = Data.getContentById(r.contentId);
+        if (c) {
+            var s = c.seasons[r.seasonIdx];
+            var ep = s ? s.episodes[r.epIdx] : null;
+            if (ep) {
+                b.style.display = 'block';
+
+                // ✅ HANYA JUDUL + EPISODE
+                document.getElementById('resumeInfo').textContent =
+                    c.title + ' • Ep ' + (r.epIdx + 1);
+
+                return;
+            }
+        }
+    }
+    b.style.display = 'none';
+},
     renderDetail: function(cid) {
         var c=Data.getContentById(cid); if(!c){UI.showToast('Konten tidak ditemukan!','error');Router.navigate('home');return;}
         var pu=c.posterFileId?Utils.getDrivePosterUrl(c.posterFileId):'';
@@ -40,7 +65,7 @@ var UI = {
             '<div class="detail-header-wrap" style="display:flex;gap:20px;align-items:flex-start;"><div class="detail-poster" style="width:240px;flex-shrink:0;overflow:hidden;border-radius:var(--radius-md);">'+ph+'</div>'+
             '<div style="flex:1;min-width:0;"><div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px;"><span class="badge '+Utils.getCategoryColor(c.category)+'">'+Utils.getCategoryLabel(c.category)+'</span><span style="color:var(--text-muted);font-size:.8rem;">'+c.seasons.length+' Season • '+te+' Episode</span></div>'+
             '<h1 style="font-size:1.6rem;font-weight:800;margin-bottom:16px;line-height:1.3;">'+Utils.escapeHtml(c.title)+'</h1>'+
-            '<div style="display:flex;gap:8px;flex-wrap:wrap;">'+(te>0?'<button class="btn btn-primary btn-lg" onclick="Router.navigate(\'watch\',\''+c.id+'\',0)">▶️ Tonton</button>':'')+
+            '<div style="display:flex;gap:8px;flex-wrap:wrap;">'+(te>0?'<button class="btn btn-secondary btn-lg" onclick="Router.navigate(\'watch\',\''+c.id+'\',0)">▶️ Tonton</button>':'')+
             '<button class="btn btn-secondary admin-only" onclick="Admin.editContent(\''+c.id+'\')">✏️ Edit</button>'+
             '<button class="btn btn-danger admin-only" onclick="Admin.deleteContent(\''+c.id+'\')">🗑️ Hapus</button></div></div></div>';
         var sh='';

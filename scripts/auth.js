@@ -1,60 +1,84 @@
 // ========== AUTH (SUPABASE + FALLBACK) ==========
 var Auth = {
     STORAGE_KEY: 'streambox_admin',
-    isAdmin: function() { return Utils.loadLocal(this.STORAGE_KEY) === true; },
+
+    isAdmin: function() {
+        return sessionStorage.getItem(this.STORAGE_KEY) === 'true';
+    },
 
     login: async function() {
-    var el = document.getElementById('adminPasswordInput');
-    var pw = el.value.trim();
-    var btn = document.getElementById('loginSubmitBtn');
+        var el = document.getElementById('adminPasswordInput');
+        var pw = el.value.trim();
+        var btn = document.getElementById('loginSubmitBtn');
 
-    if (!pw) { UI.showToast('Masukkan password!','error'); return; }
-
-    btn.disabled = true;
-    btn.textContent = '⏳ Memverifikasi...';
-
-    try {
-        if (!sb || !DB_READY) {
-            UI.showToast('Database belum siap','error');
+        if (!pw) {
+            UI.showToast('Masukkan password!','error');
             return;
         }
 
-        const { data, error } = await sb
-            .from('admin_settings')
-            .select('admin_password')
-            .eq('id', 1)
-            .single();
+        btn.disabled = true;
+        btn.textContent = '⏳ Memverifikasi...';
 
-        if (error || !data) {
-            UI.showToast('Gagal membaca password admin','error');
-            console.error(error);
-            return;
+        try {
+            if (!sb || !DB_READY) {
+                UI.showToast('Database belum siap','error');
+                return;
+            }
+
+            const { data, error } = await sb
+                .from('admin_settings')
+                .select('admin_password')
+                .eq('id', 1)
+                .single();
+
+            if (error || !data) {
+                UI.showToast('Gagal membaca password admin','error');
+                console.error(error);
+                return;
+            }
+
+            if (pw === data.admin_password) {
+                sessionStorage.setItem(this.STORAGE_KEY, 'true');
+                this.hideLoginModal();
+                this.updateUI();
+                UI.showToast('Login berhasil! Mode Admin aktif.','success');
+                UI.renderHome();
+            } else {
+                UI.showToast('Password salah!','error');
+                el.value = '';
+                el.focus();
+            }
+
+        } catch (e) {
+            UI.showToast('Error: ' + e.message,'error');
+            console.error(e);
+        } finally {
+            btn.disabled = false;
+            btn.textContent = '🔓 Masuk';
         }
+    },
 
-        if (pw === data.admin_password) {
-            Utils.saveLocal(this.STORAGE_KEY, true);
-            this.hideLoginModal();
-            this.updateUI();
-            UI.showToast('Login berhasil! Mode Admin aktif.','success');
-            UI.renderHome();
-        } else {
-            UI.showToast('Password salah!','error');
-            el.value = '';
-            el.focus();
-        }
+    logout: function() {
+        sessionStorage.removeItem(this.STORAGE_KEY);
+        this.updateUI();
+        UI.showToast('Logout berhasil.','info');
+        UI.renderHome();
+    },
 
-    } catch (e) {
-        UI.showToast('Error: ' + e.message,'error');
-        console.error(e);
-    } finally {
-        btn.disabled = false;
-        btn.textContent = '🔓 Masuk';
-    }
-},
+    showLoginModal: function() {
+        document.getElementById('loginOverlay').classList.add('active');
+        document.getElementById('loginModal').classList.add('active');
+        document.getElementById('adminPasswordInput').value='';
+        setTimeout(function(){
+            document.getElementById('adminPasswordInput').focus();
+        },150);
+    },
 
-    logout: function() { Utils.removeLocal(this.STORAGE_KEY); this.updateUI(); UI.showToast('Logout berhasil.','info'); UI.renderHome(); },
-    showLoginModal: function() { document.getElementById('loginOverlay').classList.add('active'); document.getElementById('loginModal').classList.add('active'); document.getElementById('adminPasswordInput').value=''; setTimeout(function(){document.getElementById('adminPasswordInput').focus();},150); },
-    hideLoginModal: function() { document.getElementById('loginOverlay').classList.remove('active'); document.getElementById('loginModal').classList.remove('active'); },
+    hideLoginModal: function() {
+        document.getElementById('loginOverlay').classList.remove('active');
+        document.getElementById('loginModal').classList.remove('active');
+    },
+
     updateUI: function() {
         var a = this.isAdmin();
         document.body.classList.toggle('admin-mode', a);

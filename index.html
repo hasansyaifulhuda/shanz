@@ -31,11 +31,11 @@
                     <div class="logo-text">SHAN<span>PLAY</span></div>
                 </div>
                 <nav class="nav-menu" id="navMenu">
-                    <div class="nav-link active" data-cat="all" onclick="Router.navigateCategory('all')">🏠 Semua</div>
-                    <div class="nav-link" data-cat="anime" onclick="Router.navigateCategory('anime')">🎌 Anime</div>
-                    <div class="nav-link" data-cat="kartun" onclick="Router.navigateCategory('kartun')">🎨 Kartun</div>
-                    <div class="nav-link" data-cat="movie" onclick="Router.navigateCategory('movie')">🎬 Movie</div>
-                    <div class="nav-link" data-cat="film" onclick="Router.navigateCategory('film')">🎞️ Film</div>
+                    <div class="nav-link active" data-cat="all" onclick="Router.navigateCategory('all')">Semua</div>
+                    <div class="nav-link" data-cat="anime" onclick="Router.navigateCategory('anime')">Anime</div>
+                    <div class="nav-link" data-cat="kartun" onclick="Router.navigateCategory('kartun')">Kartun</div>
+                    <div class="nav-link" data-cat="movie" onclick="Router.navigateCategory('movie')">Movie</div>
+                    <div class="nav-link" data-cat="film" onclick="Router.navigateCategory('film')">Film</div>
                 </nav>
                 <div class="header-actions">
                     <div id="adminBadgeHeader" class="admin-badge" style="display:none;">ADMIN</div>
@@ -48,11 +48,11 @@
 
         <!-- MOBILE MENU -->
         <div class="mobile-menu" id="mobileMenu">
-            <div class="nav-link active" data-cat="all" onclick="Router.navigateCategory('all');UI.closeMobileMenu()">🏠 Semua</div>
-            <div class="nav-link" data-cat="anime" onclick="Router.navigateCategory('anime');UI.closeMobileMenu()">🎌 Anime</div>
-            <div class="nav-link" data-cat="kartun" onclick="Router.navigateCategory('kartun');UI.closeMobileMenu()">🎨 Kartun</div>
-            <div class="nav-link" data-cat="movie" onclick="Router.navigateCategory('movie');UI.closeMobileMenu()">🎬 Movie</div>
-            <div class="nav-link" data-cat="film" onclick="Router.navigateCategory('film');UI.closeMobileMenu()">🎞️ Film</div>
+            <div class="nav-link active" data-cat="all" onclick="Router.navigateCategory('all');UI.closeMobileMenu()">Semua</div>
+            <div class="nav-link" data-cat="anime" onclick="Router.navigateCategory('anime');UI.closeMobileMenu()">Anime</div>
+            <div class="nav-link" data-cat="kartun" onclick="Router.navigateCategory('kartun');UI.closeMobileMenu()">Kartun</div>
+            <div class="nav-link" data-cat="movie" onclick="Router.navigateCategory('movie');UI.closeMobileMenu()">Movie</div>
+            <div class="nav-link" data-cat="film" onclick="Router.navigateCategory('film');UI.closeMobileMenu()">Film</div>
         </div>
 
         <!-- ========== MAIN CONTENT ========== -->
@@ -70,7 +70,6 @@
                         <button class="btn btn-primary btn-sm admin-only" onclick="Admin.showAddContentModal()">➕ <span class="btn-text">Tambah</span></button>
                     </div>
                 </div>
-                <div id="activeCategoryLabel" style="display:none;"></div>
                 <div id="resumeBanner" style="display:none;padding:14px;background:linear-gradient(135deg,rgba(59,130,246,.12),rgba(37,99,235,.08));border:1px solid rgba(59,130,246,.25);border-radius:var(--radius-md);margin-bottom:20px;cursor:pointer;" onclick="Player.resumeLastWatched()">
                     <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
                         <span style="font-size:1.3rem;">▶️</span>
@@ -145,19 +144,16 @@
     <div class="overlay" id="loginOverlay" onclick="Auth.hideLoginModal()"></div>
     <div class="modal" id="loginModal">
         <div class="modal-header">
-            <div class="modal-title">🔐 Login Admin</div>
+            <div class="modal-title">LOGIN</div>
             <button class="modal-close" onclick="Auth.hideLoginModal()">✕</button>
         </div>
         <div class="modal-body">
             <div class="form-group">
                 <label class="form-label">Password</label>
                 <input type="password" class="form-input" id="adminPasswordInput" placeholder="Masukkan password admin..." onkeydown="if(event.key==='Enter')Auth.login()">
-            </div>
-            <p style="font-size:.75rem;color:var(--text-muted);margin-top:4px;">Password disimpan di Supabase database.</p>
-        </div>
         <div class="modal-footer">
             <button class="btn btn-secondary" onclick="Auth.hideLoginModal()">Batal</button>
-            <button class="btn btn-primary" id="loginSubmitBtn" onclick="Auth.login()">🔓 Masuk</button>
+            <button class="btn btn-primary" id="loginSubmitBtn" onclick="Auth.login()">Masuk</button>
         </div>
     </div>
 

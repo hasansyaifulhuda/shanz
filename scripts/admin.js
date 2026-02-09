@@ -59,11 +59,25 @@ var Admin = {
         this.showModal();
     },
     updateSeasonName: async function(ci,si) {
-        var n=document.getElementById('inputSeasonName').value.trim(); if(!n){UI.showToast('Nama wajib diisi!','error');return;}
-        var btn=document.getElementById('adminSaveBtn'); btn.disabled=true;
-        try{await Data.updateSeason(ci,si,n);UI.showToast('Season diupdate!','success');this.hideModal();UI.renderDetail(ci);}
-        catch(e){UI.showToast('Error: '+e.message,'error');btn.disabled=false;}
-    },
+    const input = document.getElementById('inputSeasonName');
+    const n = input.value.trim(); // BOLEH KOSONG
+
+    const btn = document.getElementById('adminSaveBtn');
+    btn.disabled = true;
+
+    try {
+        // SIMPAN APA ADANYA (TERMASUK STRING KOSONG)
+        await Data.updateSeason(ci, si, n);
+
+        UI.showToast('Season diupdate!','success');
+        this.hideModal();
+        UI.renderDetail(ci);
+    } catch(e) {
+        UI.showToast('Error: ' + e.message,'error');
+        btn.disabled = false;
+    }
+},
+
     deleteSeason: function(ci,si) {
         if(!Auth.isAdmin())return; var c=Data.getContentById(ci); if(!c)return;
         if(c.seasons.length<=1){UI.showToast('Tidak bisa hapus season terakhir!','error');return;}
