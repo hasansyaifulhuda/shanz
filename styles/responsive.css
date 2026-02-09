@@ -1,0 +1,131 @@
+/* RESPONSIVE CSS */
+@media (max-width: 1024px) {
+    .watch-container {
+        grid-template-columns: 1fr;
+    }
+
+    .episode-sidebar {
+        position: static;
+        max-height: none;
+    }
+
+    .mobile-episode-toggle {
+        display: block;
+    }
+
+    .episode-sidebar.collapsed .episode-list-container,
+    .episode-sidebar.collapsed .season-selector,
+    .episode-sidebar.collapsed .load-more-btn {
+        display: none;
+    }
+
+    .grid-container {
+        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+        gap: 16px;
+    }
+}
+
+@media (max-width: 480px) {
+    .grid-container {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+    }
+
+    .site-header {
+        padding: 0 12px;
+    }
+
+    .logo-text {
+        font-size: 1.1rem;
+    }
+
+    .video-meta {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 4px;
+    }
+}
+
+
+/* =================================================
+   FIX RESPONSIVE HALAMAN DETAIL (MOBILE)
+   ================================================= */
+@media (max-width: 768px) {
+
+  /* layout utama detail (2 kolom → 1 kolom) */
+  .detail-layout,
+  .content-layout,
+  .content-detail,
+  .detail-container {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 12px;
+  }
+
+  /* poster / preview */
+  .detail-poster,
+  .poster,
+  .poster-box {
+    width: 100% !important;
+    max-width: none !important;
+    height: auto;
+  }
+
+  /* panel info kanan */
+  .detail-side,
+  .detail-info,
+  .info-panel {
+    width: 100% !important;
+    margin: 0 !important;
+  }
+
+  /* tombol admin (Edit, Hapus, +Ep) */
+  .admin-actions,
+  .admin-buttons {
+    display: flex !important;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .admin-actions button,
+  .admin-buttons button {
+    flex: 1 1 auto;
+  }
+
+  /* header detail (judul + badge) */
+  .detail-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+  }
+
+  /* season box */
+  .season-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+}
+
+@media (max-width: 768px) {
+    .grid-container {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+    }
+
+    .content-card {
+        max-width: 100%;
+    }
+}
+@media (max-width: 768px) {
+    .poster-container {
+        width: 100%;
+    }
+
+    .poster-img {
+        width: 100%;
+        height: auto;
+        display: block;
+        object-fit: unset;
+    }
+}
