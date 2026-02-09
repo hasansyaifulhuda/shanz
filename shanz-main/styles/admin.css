@@ -1,0 +1,221 @@
+/* ADMIN CSS — KRITIS: Semua elemen admin TERSEMBUNYI di mode Guest */
+
+/*
+    ATURAN UTAMA:
+    - Class "admin-only" = elemen yang HANYA tampil di mode Admin
+    - Class "card-admin-overlay" = tombol edit/hapus di card poster
+    - Class "ep-admin-actions" = tombol edit/hapus di episode list
+    
+    SEMUA elemen di atas menggunakan display:none !important secara default.
+    HANYA muncul ketika <body> memiliki class "admin-mode".
+    
+    !important digunakan untuk memastikan TIDAK ADA CSS lain yang bisa
+    menimpa dan menampilkan elemen admin di mode Guest.
+*/
+
+/* ============ TOMBOL ADMIN UMUM (Tambah Konten, Tambah Season, Edit, Hapus, dll) ============ */
+.admin-only {
+    display: none !important;
+}
+.admin-mode .admin-only {
+    display: inline-flex !important;
+}
+
+/* ============ OVERLAY EDIT/HAPUS DI CARD POSTER (Halaman Home) ============ */
+.card-admin-overlay {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    display: none !important;
+    gap: 4px;
+    z-index: 10;
+}
+.admin-mode .card-admin-overlay {
+    display: flex !important;
+}
+
+/* ============ TOMBOL EDIT/HAPUS DI EPISODE LIST (Halaman Detail & Watch) ============ */
+.ep-admin-actions {
+    display: none !important;
+    gap: 4px;
+}
+.admin-mode .ep-admin-actions {
+    display: flex !important;
+}
+
+/* ============ STYLING TOMBOL ADMIN KECIL (BULAT) ============ */
+.card-admin-btn {
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    font-size: 0.8rem;
+    transition: var(--transition);
+    backdrop-filter: blur(4px);
+}
+
+.card-admin-btn.edit-btn {
+    background: rgba(59, 130, 246, 0.8);
+    color: white;
+}
+
+.card-admin-btn.delete-btn {
+    background: rgba(239, 68, 68, 0.8);
+    color: white;
+}
+
+.card-admin-btn:hover {
+    transform: scale(1.1);
+}
+
+/* ============ MODAL FORM ADMIN ============ */
+.admin-form-modal {
+    max-width: 600px;
+}
+
+.admin-form-modal .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+
+/* ============ KONFIRMASI DIALOG ============ */
+.confirm-dialog {
+    text-align: center;
+    padding: 20px 0;
+}
+
+.confirm-dialog .icon {
+    font-size: 3rem;
+    margin-bottom: 16px;
+    color: var(--warning);
+}
+
+.confirm-dialog p {
+    font-size: 1rem;
+    color: var(--text-secondary);
+    margin-bottom: 6px;
+}
+
+.confirm-dialog .warn {
+    font-size: 0.85rem;
+    color: var(--danger);
+}
+
+/* ============ DRIVE LINK DETECTOR CSS ============ */
+@keyframes popIn {
+    0% { opacity: 0; transform: scale(0.5) translateY(-50%); }
+    60% { transform: scale(1.1) translateY(-50%); }
+    100% { opacity: 1; transform: scale(1) translateY(-50%); }
+}
+
+.drive-input-wrap {
+    position: relative;
+}
+
+.drive-input-wrap .form-input {
+    padding-right: 44px;
+}
+
+.drive-status {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 1.1rem;
+    animation: popIn 0.3s ease;
+    pointer-events: none;
+}
+
+.drive-detected-box {
+    margin-top: 8px;
+    padding: 10px 14px;
+    background: rgba(34, 197, 94, 0.08);
+    border: 1px solid rgba(34, 197, 94, 0.25);
+    border-radius: var(--radius-sm);
+    display: none;
+    animation: fadeIn 0.3s ease;
+}
+
+.drive-detected-box.active {
+    display: block;
+}
+
+.drive-detected-box .detected-label {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--success);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 4px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.drive-detected-box .detected-id {
+    font-size: 0.8rem;
+    color: var(--blue-light);
+    font-family: 'Courier New', monospace;
+    word-break: break-all;
+    background: rgba(59, 130, 246, 0.1);
+    padding: 4px 8px;
+    border-radius: 4px;
+    margin-top: 4px;
+}
+
+.drive-preview-thumb {
+    margin-top: 8px;
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+    max-width: 120px;
+    max-height: 80px;
+    border: 1px solid var(--border-color);
+}
+
+.drive-preview-thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.drive-help-text {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    margin-top: 6px;
+    line-height: 1.5;
+}
+
+.drive-help-text code {
+    background: var(--bg-tertiary);
+    padding: 1px 5px;
+    border-radius: 3px;
+    font-size: 0.7rem;
+    color: var(--blue-light);
+}
+
+.form-input.input-success {
+    border-color: var(--success) !important;
+}
+
+.form-input.input-error {
+    border-color: var(--danger) !important;
+}
+
+.res-info {
+    margin-top: 6px;
+    padding: 8px 12px;
+    background: rgba(59, 130, 246, 0.06);
+    border: 1px solid rgba(59, 130, 246, 0.15);
+    border-radius: var(--radius-sm);
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    line-height: 1.6;
+}
+
+.res-info strong {
+    color: var(--blue-light);
+}
+
