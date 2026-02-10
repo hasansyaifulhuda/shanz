@@ -46,7 +46,15 @@ var Data = {
 
     getContents: function() { return this._cache.contents || []; },
     getContentById: function(id) { return this.getContents().find(function(c){return c.id===id;}) || null; },
-    getContentsByCategory: function(cat) { return cat==='all' ? this.getContents() : this.getContents().filter(function(c){return c.category===cat;}); },
+  getContentsByCategory: function(cat) {
+    if (cat === 'all') {
+        return this.getContents();
+    }
+
+    return this.getContents().filter(function(c) {
+        return c.category === cat;
+    });
+},
     searchContents: function(q) { q=q.toLowerCase().trim(); if(!q) return this.getContents(); return this.getContents().filter(function(c){return c.title.toLowerCase().indexOf(q)!==-1;}); },
 
     addContent: async function(c) {
