@@ -2,9 +2,12 @@
 .watch-container {
     display: grid;
     grid-template-columns: 1fr 380px;
-    gap: 24px;
-    max-width: 1400px;
-    margin: 0 auto;
+}
+
+@media (max-width: 768px) {
+    .watch-container {
+        grid-template-columns: 1fr;
+    }
 }
 
 .player-section {
@@ -305,4 +308,4 @@
 .player-wrapper iframe {
     max-width: 100%;
     overflow-x: hidden;
-    }
+}
