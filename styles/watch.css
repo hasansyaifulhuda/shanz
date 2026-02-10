@@ -293,3 +293,16 @@
     border: 1px solid var(--border-color);
 }
 
+/* ===== FIX HORIZONTAL SCROLL MOBILE ===== */
+@media (max-width: 1024px) {
+    .watch-container {
+        max-width: 100%;
+        overflow-x: hidden;
+    }
+}
+
+.player-wrapper,
+.player-wrapper iframe {
+    max-width: 100%;
+    overflow-x: hidden;
+    }
