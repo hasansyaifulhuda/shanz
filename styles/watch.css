@@ -2,12 +2,9 @@
 .watch-container {
     display: grid;
     grid-template-columns: 1fr 380px;
-}
-
-@media (max-width: 768px) {
-    .watch-container {
-        grid-template-columns: 1fr;
-    }
+    gap: 24px;
+    max-width: 1400px;
+    margin: 0 auto;
 }
 
 .player-section {
@@ -296,16 +293,3 @@
     border: 1px solid var(--border-color);
 }
 
-/* ===== FIX HORIZONTAL SCROLL MOBILE ===== */
-@media (max-width: 1024px) {
-    .watch-container {
-        max-width: 100%;
-        overflow-x: hidden;
-    }
-}
-
-.player-wrapper,
-.player-wrapper iframe {
-    max-width: 100%;
-    overflow-x: hidden;
-}
