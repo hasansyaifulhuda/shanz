@@ -1,0 +1,91 @@
+/* ========================================
+   BASE CSS - Reset & Foundation Styles
+   ======================================== */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+    line-height: 1.6;
+    overflow-x: hidden;
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+button {
+    cursor: pointer;
+    border: none;
+    outline: none;
+    font-family: inherit;
+}
+
+input, select, textarea {
+    font-family: inherit;
+    outline: none;
+}
+
+img {
+    max-width: 100%;
+    display: block;
+}
+
+ul, ol {
+    list-style: none;
+}
+
+/* Utility Classes */
+.hidden {
+    display: none !important;
+}
+
+.flex-center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.text-center {
+    text-align: center;
+}
+
+.text-ellipsis {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.episode-context-menu {
+    position: absolute;
+    background: #1f1f1f;
+    border-radius: 8px;
+    padding: 6px;
+    z-index: 9999;
+}
+
+.episode-context-menu button {
+    display: block;
+    width: 100%;
+    background: none;
+    border: none;
+    color: #fff;
+    padding: 8px 12px;
+    text-align: left;
+}
+
+.episode-context-menu .danger {
+    color: #ff4d4f;
+}
+
+.hidden {
+    display: none;
+}

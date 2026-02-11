@@ -1,0 +1,139 @@
+/* ========================================
+   LAYOUT CSS - Container & Grid System
+   ======================================== */
+
+.container {
+    width: 100%;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 4%;
+}
+
+.page-content {
+    min-height: calc(100vh - 68px);
+    padding-top: 88px;
+    padding-bottom: 40px;
+}
+
+/* Grid Catalog untuk Konten */
+.grid-catalog {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 180px));
+    gap: 20px;
+    justify-content: center;
+}
+
+@media (min-width: 1200px) {
+    .grid-catalog {
+        grid-template-columns: repeat(6, 180px);
+    }
+}
+
+@media (min-width: 900px) and (max-width: 1199px) {
+    .grid-catalog {
+        grid-template-columns: repeat(5, 160px);
+    }
+}
+
+@media (min-width: 600px) and (max-width: 899px) {
+    .grid-catalog {
+        grid-template-columns: repeat(4, 140px);
+    }
+}
+
+@media (max-width: 599px) {
+    .grid-catalog {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+    }
+}
+
+/* Section Title */
+.section-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 16px;
+}
+
+/* Empty State */
+.empty-state {
+    text-align: center;
+    padding: 80px 20px;
+    color: var(--text-secondary);
+}
+
+.empty-icon {
+    font-size: 4rem;
+    margin-bottom: 20px;
+    opacity: 0.5;
+}
+
+.empty-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 12px;
+    color: var(--text-primary);
+}
+
+.empty-text {
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+/* Loading Spinner */
+.loading-spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid var(--bg-tertiary);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+.page-loading {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: var(--bg-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+}
+
+/* Notification */
+.notification {
+    position: fixed;
+    top: 80px;
+    right: 20px;
+    padding: 16px 24px;
+    background: var(--bg-secondary);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-lg);
+    z-index: 3000;
+    transform: translateX(120%);
+    transition: transform var(--transition);
+    max-width: 350px;
+}
+
+.notification.show {
+    transform: translateX(0);
+}
+
+.notification.success {
+    border-left: 4px solid var(--success);
+}
+
+.notification.error {
+    border-left: 4px solid var(--error);
+}
+
+.notification.warning {
+    border-left: 4px solid var(--warning);
+}
