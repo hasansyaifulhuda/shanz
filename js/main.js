@@ -151,7 +151,31 @@ sessionStorage.removeItem('isAdmin');
         
         // Update admin UI
         UI.updateAdminUI();
-        
+  // ===== LIVE SEARCH =====
+const searchInput = document.getElementById('searchInput');
+let searchTimeout;
+
+if (searchInput) {
+
+    searchInput.addEventListener('input', () => {
+
+        clearTimeout(searchTimeout);
+
+        searchTimeout = setTimeout(() => {
+
+            const value = searchInput.value.trim();
+
+            if (value.length > 0) {
+                Router.navigate(`/?search=${encodeURIComponent(value)}`);
+            } else {
+                Router.navigate('/');
+            }
+
+        }, 300); // debounce 300ms
+
+    });
+
+}
         // Initialize router
         Router.init();
     });

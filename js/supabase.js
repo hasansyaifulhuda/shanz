@@ -249,6 +249,13 @@ const Supabase = {
         return data?.[0] || null;
     },
     
+    // ========== SEARCH ==========
+async searchContents(keyword) {
+    return this.request(
+        `contents?title=ilike.*${encodeURIComponent(keyword)}*&select=*&order=created_at.desc`
+    );
+},
+
     // ========== AUTH ==========
     
     /**

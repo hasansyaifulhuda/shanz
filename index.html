@@ -31,13 +31,22 @@
                 <a href="#/" class="nav-link" data-page="home">Beranda</a>
                 <a href="#/" class="nav-link" data-filter="anime">Anime</a>
                 <a href="#/" class="nav-link" data-filter="kartun">Kartun</a>
-                <a href="#/" class="nav-link" data-filter="movie">Movie</a>
+                <a href="#/" class="nav-link" data-filter="animasi">Animasi</a>
                 <a href="#/" class="nav-link" data-filter="film">Film</a>
             </nav>
-            <div class="header-actions">
-                <button class="btn btn-ghost" id="loginBtn">Admin</button>
-                <button class="btn btn-secondary hidden" id="logoutBtn">Logout</button>
-                <button class="menu-toggle" id="menuToggle">
+           <div class="header-actions">
+
+    <input 
+        type="text"
+        id="searchInput"
+        placeholder="Cari judul..."
+        class="search-input"
+    >
+
+    <button class="btn btn-ghost" id="loginBtn">Admin</button>
+    <button class="btn btn-secondary hidden" id="logoutBtn">Logout</button>
+
+    <button class="menu-toggle" id="menuToggle">
                     <span></span>
                     <span></span>
                     <span></span>
@@ -58,7 +67,7 @@
     <div class="modal-backdrop" id="loginModal">
         <div class="modal">
             <div class="modal-header">
-                <h3 class="modal-title">Login Admin</h3>
+                <h3 class="modal-title">LOGIN</h3>
                 <button class="modal-close" onclick="UI.closeModal('loginModal')">×</button>
             </div>
             <div class="modal-body">
@@ -101,7 +110,7 @@
                             <option value="">Pilih tipe</option>
                             <option value="anime">Anime</option>
                             <option value="kartun">Kartun</option>
-                            <option value="movie">Movie</option>
+                            <option value="Animasi">Animasi</option>
                             <option value="film">Film</option>
                         </select>
                     </div>

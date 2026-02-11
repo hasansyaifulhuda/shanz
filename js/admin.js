@@ -167,14 +167,27 @@ async saveSeason(e) {
     };
 
     try {
-        if (id) {
-            await Supabase.updateSeason(id, season);
-            UI.notify('Judul berhasil diupdate');
-        } else {
-            await Supabase.createSeason(season);
-            UI.notify('Judul berhasil ditambahkan');
-        }
+       let createdSeason;
 
+if (id) {
+    await Supabase.updateSeason(id, season);
+    UI.notify('Judul berhasil diupdate');
+} else {
+    createdSeason = await Supabase.createSeason(season);
+    UI.notify('Judul berhasil ditambahkan');
+}
+
+// AUTO BUAT EPISODE PERTAMA
+if (createdSeason && createdSeason.length > 0) {
+    const newSeasonId = createdSeason[0].id;
+
+    await Supabase.createEpisode({
+        season_id: newSeasonId,
+        episode_number: 1,
+        title: '',
+        video_id: ''
+    });
+}
         UI.closeModal('seasonModal');
         Router.handle();
 

@@ -7,15 +7,16 @@ const Pages = {
      * Home page - Content catalog
      */
     async home(params, query) {
+        const search = query.get('search');
         const filter = query.get('filter');
         let contents = [];
         let isConfigured = Supabase.isConfigured();
         
-        if (isConfigured) {
-            try {
-                contents = await Supabase.getContents(filter) || [];
-            } catch {}
-        }
+       if (search) {
+    contents = await Supabase.searchContents(search) || [];
+} else {
+    contents = await Supabase.getContents(filter) || [];
+}
         
         const isAdmin = Auth.isAdmin();
         
@@ -145,7 +146,7 @@ const Pages = {
                                     <button class="btn btn-primary btn-sm" onclick="Admin.openAddSeason(${content.id})">
     Tambah Judul
 </button>
-                                    <button class="btn btn-secondary btn-sm" onclick="Admin.openAddEpisodeDirect(${content.id})">+ Episode</button>
+                                   
                                 </div>
                             ` : ''}
                         </div>
@@ -169,20 +170,25 @@ const Pages = {
                 html += `
                     <div class="season-box">
                         <div class="season-header">
-                           <h3 class="season-title season-title-edit"
-    data-season-id="${season.id}">
-    ${season.title ? Utils.escapeHtml(season.title) : 'Tanpa Judul'}
-</h3>
-                            ${isAdmin ? `
-                                <div class="season-actions admin-only">
-    <button class="btn btn-danger btn-sm"
-        onclick="Admin.deleteSeason(${season.id})">
-        Hapus
-    </button>
-</div>
-                            ` : ''}
-                        </div>
-                        
+   <h3 class="season-title season-title-edit"
+       data-season-id="${season.id}">
+       ${season.title ? Utils.escapeHtml(season.title) : 'Tanpa Judul'}
+   </h3>
+
+   ${isAdmin ? `
+       <div class="season-actions admin-only">
+           <button class="btn btn-secondary btn-sm"
+               onclick="Admin.openAddEpisode(${season.id}, ${content.id})">
+               + Episode
+           </button>
+
+           <button class="btn btn-danger btn-sm"
+               onclick="Admin.deleteSeason(${season.id})">
+               Hapus
+           </button>
+       </div>
+   ` : ''}
+</div>                  
                         ${episodes.length === 0 
                             ? `<p style="color:var(--text-muted)">Belum ada episode</p>`
                             : `
@@ -282,10 +288,9 @@ if (isAdmin) {
                             <button class="btn btn-secondary" id="prevEpBtn" disabled>◀ Sebelumnya</button>
                             <button class="btn btn-primary" id="nextEpBtn" ${!nextEp ? 'disabled' : ''}>Selanjutnya ▶</button>
                         </div>
-                        <label style="display:flex;align-items:center;gap:8px;color:var(--text-secondary);cursor:pointer;">
-                            <input type="checkbox" id="autoNextToggle" ${AutoNext.enabled ? 'checked' : ''}>
-                            Auto Next
-                        </label>
+                        <label style="display:none;">
+    <input type="checkbox" id="autoNextToggle">
+</label>
                     </div>
                     
                     <div class="watch-info">
@@ -324,7 +329,45 @@ if (isAdmin) {
                 </div>
             </div>
         `;
-        
+        // ===== FUNCTION FILTER GRID TANPA RELOAD =====
+window.filterGrid = function(keyword) {
+
+    const grid = document.querySelector('.grid-catalog');
+    if (!grid) return;
+
+    const lowerKeyword = keyword.toLowerCase();
+
+    const filtered = window.__ALL_CONTENTS__.filter(item =>
+        item.title.toLowerCase().includes(lowerKeyword)
+    );
+
+    if (filtered.length === 0) {
+        grid.innerHTML = `<p style="color:var(--text-muted)">Tidak ditemukan</p>`;
+        return;
+    }
+
+    grid.innerHTML = filtered.map(content => {
+        const posterUrl = content.poster_id 
+            ? Utils.getDriveThumbnailUrl(content.poster_id)
+            : '';
+
+        return `
+            <a href="#/detail/${content.id}" class="content-card">
+                <div class="card-poster">
+                    ${posterUrl 
+                        ? `<img src="${posterUrl}" alt="${Utils.escapeHtml(content.title)}">`
+                        : '<div class="card-poster-placeholder">🎬</div>'
+                    }
+                </div>
+                <div class="card-overlay">
+                    <div class="card-title">${Utils.escapeHtml(content.title)}</div>
+                </div>
+            </a>
+        `;
+    }).join('');
+
+};
+
         document.getElementById('app').innerHTML = html;
         
         // Load player
