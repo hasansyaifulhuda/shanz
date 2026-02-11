@@ -1,0 +1,111 @@
+/* ========================================
+   DETAIL CSS - Detail Page Styles
+   ======================================== */
+
+.detail-hero {
+    position: relative;
+    min-height: 500px;
+    display: flex;
+    align-items: flex-end;
+    padding: 40px 4%;
+    margin-top: -68px;
+}
+
+.detail-backdrop {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+    filter: blur(8px) brightness(0.3);
+}
+
+.detail-backdrop::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 200px;
+    background: linear-gradient(to top, var(--bg-primary) 0%, transparent 100%);
+}
+
+.detail-content {
+    position: relative;
+    display: flex;
+    gap: 32px;
+    max-width: 1200px;
+    width: 100%;
+    margin: 0 auto;
+    padding-top: 100px;
+}
+
+/* ===== FIX DETAIL POSTER ===== */
+
+.detail-poster {
+    width: 240px;
+    max-width: 100%;
+    background: transparent;
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.detail-poster img {
+    width: 100%;
+    height: auto;              /* 🔥 IKUT RASIO ASLI */
+    display: block;
+    object-fit: contain;       /* 🔥 UTUH, TIDAK DIPOTONG */
+    border-radius: 12px;
+}
+
+.detail-info {
+    flex: 1;
+}
+
+.detail-type {
+    display: inline-block;
+    padding: 4px 12px;
+    background: var(--accent);
+    border-radius: var(--radius);
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+}
+
+.detail-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 16px;
+    line-height: 1.2;
+}
+
+.detail-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-bottom: 20px;
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+}
+
+.detail-meta-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.detail-description {
+    color: var(--text-secondary);
+    line-height: 1.8;
+    margin-bottom: 24px;
+    max-width: 700px;
+}
+
+.detail-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+}
