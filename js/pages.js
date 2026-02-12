@@ -7,17 +7,25 @@ const Pages = {
      * Home page - Content catalog
      */
     async home(params, query) {
-        const search = query.get('search');
-        const filter = query.get('filter');
-        let contents = [];
-        let isConfigured = Supabase.isConfigured();
-        
-       if (search) {
+   const search = query.get('search');
+let filter = query.get('filter');
+let contents = [];
+let isConfigured = Supabase.isConfigured();
+
+// ⬇️ WAJIB: samakan huruf kecil supaya cocok dengan database
+if (filter) {
+    filter = filter.toLowerCase();
+}
+
+if (search) {
     contents = await Supabase.searchContents(search) || [];
 } else {
     contents = await Supabase.getContents(filter) || [];
 }
-        
+
+// ⬇️ SIMPAN UNTUK LIVE SEARCH
+window.__ALL_CONTENTS__ = contents;
+  
         const isAdmin = Auth.isAdmin();
         
         let html = `

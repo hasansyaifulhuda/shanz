@@ -72,15 +72,18 @@ const Admin = {
         };
         
         try {
-            if (id) {
-                await Supabase.updateContent(id, content);
-                UI.notify('Konten berhasil diupdate');
-            } else {
-                await Supabase.createContent(content);
-                UI.notify('Konten berhasil ditambahkan');
-            }
-            UI.closeModal('contentModal');
-            Router.handle();
+        if (id) {
+    await Supabase.updateContent(id, content);
+    UI.notify('Konten berhasil diupdate');
+} else {
+    await Supabase.createContent(content);
+    UI.notify('Konten berhasil ditambahkan');
+}
+
+UI.closeModal('contentModal');
+
+// 🔥 Paksa reload total supaya fetch ulang dari Supabase
+location.reload();
         } catch (err) {
             UI.notify('Gagal menyimpan konten', 'error');
         }

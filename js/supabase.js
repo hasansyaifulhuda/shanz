@@ -77,12 +77,15 @@ const Supabase = {
      * @returns {Promise<Array>} - Contents array
      */
     async getContents(filter = null) {
-        let endpoint = 'contents?select=*&order=created_at.desc';
-        if (filter) {
-            endpoint += `&type=eq.${filter}`;
-        }
-        return this.request(endpoint);
-    },
+    let endpoint = 'contents?select=*&order=created_at.desc';
+
+    if (filter) {
+        const normalized = filter.toLowerCase().trim();
+        endpoint += `&type=eq.${normalized}`;
+    }
+
+    return this.request(endpoint);
+},
     
     /**
      * Get single content by ID
