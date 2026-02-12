@@ -23,6 +23,12 @@ if (search) {
     contents = await Supabase.getContents(filter) || [];
 }
 
+// ===== ACAK URUTAN SETIAP LOAD =====
+for (let i = contents.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [contents[i], contents[j]] = [contents[j], contents[i]];
+}
+
 // ⬇️ SIMPAN UNTUK LIVE SEARCH
 window.__ALL_CONTENTS__ = contents;
   
