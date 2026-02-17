@@ -1,0 +1,187 @@
+/* =====================================================
+   CODE BLOCK STYLES
+   ===================================================== */
+
+.code-container {
+    background: var(--code-bg);
+    border: 1px solid var(--code-border);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    margin-bottom: 2rem;
+}
+
+.code-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.75rem 1rem;
+    background: rgba(0, 0, 0, 0.3);
+    border-bottom: 1px solid var(--code-border);
+}
+
+.code-language {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.25rem 0.75rem;
+    background: var(--primary);
+    color: var(--text-primary);
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-radius: var(--radius-full);
+}
+
+.code-language::before {
+    content: '';
+    width: 8px;
+    height: 8px;
+    background: var(--accent);
+    border-radius: 50%;
+}
+
+.copy-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    background: var(--bg-tertiary);
+    color: var(--text-secondary);
+    font-size: 0.8rem;
+    font-weight: 500;
+    border-radius: var(--radius-md);
+    transition: all var(--transition-fast);
+}
+
+.copy-btn:hover {
+    background: var(--primary);
+    color: var(--text-primary);
+}
+
+.copy-btn.copied {
+    background: var(--success);
+    color: var(--text-primary);
+}
+
+.copy-btn.copied i::before {
+    content: '\f00c';
+}
+
+/* Prism.js Overrides */
+.code-container pre {
+    margin: 0;
+    padding: 1.5rem;
+    background: transparent !important;
+    overflow-x: auto;
+}
+
+.code-container pre code {
+    font-family: 'JetBrains Mono', 'Fira Code', monospace;
+    font-size: 0.875rem;
+    line-height: 1.7;
+    tab-size: 4;
+}
+
+/* Line Numbers */
+.code-container pre.line-numbers {
+    padding-left: 3.5rem;
+    position: relative;
+}
+
+.code-container .line-numbers-rows {
+    position: absolute;
+    left: 0;
+    top: 1.5rem;
+    width: 3rem;
+    padding: 0 0.5rem;
+    text-align: right;
+    border-right: 1px solid var(--border-secondary);
+    user-select: none;
+    pointer-events: none;
+}
+
+.code-container .line-numbers-rows span {
+    color: var(--text-muted);
+    font-size: 0.8rem;
+}
+
+/* Code Syntax Colors - Tomorrow Night Theme Override */
+.code-container .token.comment,
+.code-container .token.prolog,
+.code-container .token.doctype,
+.code-container .token.cdata {
+    color: #6a737d;
+}
+
+.code-container .token.punctuation {
+    color: #e1e4e8;
+}
+
+.code-container .token.property,
+.code-container .token.tag,
+.code-container .token.boolean,
+.code-container .token.number,
+.code-container .token.constant,
+.code-container .token.symbol {
+    color: #79b8ff;
+}
+
+.code-container .token.selector,
+.code-container .token.attr-name,
+.code-container .token.string,
+.code-container .token.char,
+.code-container .token.builtin {
+    color: #9ecbff;
+}
+
+.code-container .token.operator,
+.code-container .token.entity,
+.code-container .token.url,
+.code-container .language-css .token.string,
+.code-container .style .token.string,
+.code-container .token.variable {
+    color: #ffab70;
+}
+
+.code-container .token.atrule,
+.code-container .token.attr-value,
+.code-container .token.function {
+    color: #b392f0;
+}
+
+.code-container .token.keyword {
+    color: #f97583;
+}
+
+.code-container .token.regex,
+.code-container .token.important {
+    color: #ffab70;
+}
+
+.code-container .token.important,
+.code-container .token.bold {
+    font-weight: bold;
+}
+
+.code-container .token.italic {
+    font-style: italic;
+}
+
+/* Code Block Without Code */
+.code-container.empty {
+    display: none;
+}
+
+/* Multiple Code Blocks */
+.code-blocks-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+.code-container .token.tag {
+    background: none !important;
+    padding: 0 !important;
+    border-radius: 0 !important;
+    display: inline !important;
+}

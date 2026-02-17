@@ -1,0 +1,381 @@
+/* =====================================================
+   SIDEBAR STYLES
+   ===================================================== */
+
+.sidebar {
+    position: fixed;
+    top: var(--header-height);
+    left: 0;
+    width: var(--sidebar-width);
+    height: calc(100vh - var(--header-height));
+    background: rgba(5, 5, 10, 0.98);
+    backdrop-filter: blur(10px);
+    border-right: 1px solid var(--border-primary);
+    overflow-y: auto;
+    overflow-x: hidden;
+    z-index: var(--z-sidebar);
+    transform: translateX(0);
+    visibility: visible;
+}
+
+.sidebar.collapsed {
+    transform: translateX(-100%);
+    visibility: hidden;
+}
+
+.sidebar-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(2px);
+    opacity: 0;
+    visibility: hidden;
+    z-index: calc(var(--z-sidebar) - 1);
+    -webkit-tap-highlight-color: transparent;
+}
+
+.sidebar-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* Sidebar Header */
+.sidebar-header {
+    padding: 1.25rem;
+    border-bottom: 1px solid var(--border-secondary);
+    position: sticky;
+    top: 0;
+    background: var(--bg-secondary);
+    z-index: 1;
+}
+
+.sidebar-header h2 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.sidebar-header h2 i {
+    color: var(--primary);
+}
+
+.mode-badge {
+    display: inline-block;
+    margin-top: 0.5rem;
+    padding: 0.25rem 0.75rem;
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-radius: var(--radius-full);
+}
+
+.mode-badge.guest {
+    background: rgba(148, 163, 184, 0.2);
+    color: var(--text-secondary);
+}
+
+.mode-badge.admin {
+    background: rgba(99, 102, 241, 0.2);
+    color: var(--primary-light);
+}
+
+/* Folder Tree */
+.folder-tree {
+    padding: 1rem 0;
+}
+
+.folder-item {
+    position: relative;
+}
+
+.folder-header {
+    display: flex;
+    align-items: center;
+    padding: 0.625rem 1rem;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    position: relative;
+}
+
+.folder-header:hover {
+    background: var(--bg-hover);
+}
+
+.folder-header:hover::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 3px;
+    background: var(--primary);
+}
+
+.folder-header.active {
+    background: var(--bg-hover);
+}
+
+.folder-header.active::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 3px;
+    background: var(--primary);
+}
+
+.folder-toggle {
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 0.25rem;
+    color: var(--text-muted);
+    transition: transform var(--transition-fast);
+    flex-shrink: 0;
+}
+
+.folder-toggle.expanded {
+    transform: rotate(90deg);
+}
+
+.folder-icon {
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 0.5rem;
+    color: var(--folder-color);
+    transition: all var(--transition-fast);
+    flex-shrink: 0;
+}
+
+.folder-header:hover .folder-icon {
+    filter: drop-shadow(0 0 8px var(--folder-color));
+}
+
+.folder-name {
+    flex: 1;
+    font-size: 0.9rem;
+    color: var(--text-primary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Folder Actions (Admin Only) */
+.folder-actions {
+    display: flex;
+    gap: 0.25rem;
+    opacity: 0;
+    transition: opacity var(--transition-fast);
+}
+
+.folder-header:hover .folder-actions {
+    opacity: 1;
+}
+
+.folder-action-btn {
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-muted);
+    border-radius: var(--radius-sm);
+    transition: all var(--transition-fast);
+}
+
+.folder-action-btn:hover {
+    background: var(--bg-tertiary);
+    color: var(--text-primary);
+}
+
+.folder-action-btn.edit:hover {
+    color: var(--primary);
+}
+
+.folder-action-btn.delete:hover {
+    color: var(--error);
+}
+
+/* Nested Folders */
+.folder-children {
+    padding-left: 1.25rem;
+    overflow: hidden;
+    display: none;
+}
+
+.folder-children.expanded {
+    display: block;
+}
+
+/* Page Items */
+.page-item {
+    display: flex;
+    align-items: center;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    position: relative;
+}
+
+.page-item:hover {
+    background: var(--bg-hover);
+}
+
+.page-item.active {
+    background: var(--bg-hover);
+}
+
+.page-item.active::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 3px;
+    background: var(--accent);
+}
+
+.page-icon {
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 0.5rem;
+    color: var(--file-color);
+    font-size: 0.85rem;
+    flex-shrink: 0;
+}
+
+.page-name {
+    flex: 1;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.page-item:hover .page-name,
+.page-item.active .page-name {
+    color: var(--text-primary);
+}
+
+/* Search Highlight */
+.highlight {
+    background: var(--primary-glow);
+    color: var(--primary-light);
+    padding: 0 2px;
+    border-radius: 2px;
+}
+
+/* Empty Folder Message */
+.empty-folder {
+    padding: 0.75rem 1rem;
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    font-style: italic;
+}
+
+/* Loading State */
+.folder-loading {
+    padding: 2rem;
+    text-align: center;
+}
+
+.folder-loading .loading {
+    margin: 0 auto;
+}
+
+/* Drag & Drop Styles */
+.folder-item.dragging {
+    opacity: 0.5;
+}
+
+.folder-item.drag-above {
+    border-top: 2px solid var(--primary);
+}
+
+.folder-item.drag-below {
+    border-bottom: 2px solid var(--primary);
+}
+
+.folder-header[draggable="true"] {
+    cursor: grab;
+}
+
+.folder-header[draggable="true"]:active {
+    cursor: grabbing;
+}
+
+/* Sidebar Footer - Add Buttons */
+.sidebar-footer {
+    position: sticky;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 1rem;
+    background: var(--bg-secondary);
+    border-top: 1px solid var(--border-secondary);
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    z-index: 10;
+}
+
+.sidebar-add-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1rem;
+    background: var(--bg-tertiary);
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+    font-weight: 500;
+    border-radius: var(--radius-md);
+    border: 1px dashed var(--border-secondary);
+    transition: all var(--transition-fast);
+    cursor: pointer;
+    width: 100%;
+}
+
+.sidebar-add-btn:hover {
+    background: var(--bg-hover);
+    border-color: var(--primary);
+    color: var(--primary-light);
+}
+
+.sidebar-add-btn:hover i {
+    color: var(--primary);
+}
+
+.sidebar-add-btn i {
+    font-size: 1rem;
+    transition: color var(--transition-fast);
+}
+
+/* Adjust folder tree to account for footer */
+.sidebar {
+    display: flex;
+    flex-direction: column;
+}
+
+.folder-tree {
+    flex: 1;
+    overflow-y: auto;
+    padding-bottom: 0;
+}
