@@ -99,7 +99,26 @@
         min-width: 40px;
         min-height: 40px;
     }
-    
+    /* === Fix Sidebar Footer: 1 Row Buttons === */
+.sidebar-footer {
+    flex-direction: row;
+    gap: 0.5rem;
+}
+
+.sidebar-add-btn {
+    flex: 1;
+    width: auto;
+    font-size: 0.75rem;
+    padding: 0.6rem 0.5rem;
+}
+body.sidebar-open {
+    overflow: hidden;
+}
+
+.sidebar-add-btn i {
+    font-size: 0.85rem;
+}
+
     /* Hamburger */
     .hamburger {
         min-width: 40px;
