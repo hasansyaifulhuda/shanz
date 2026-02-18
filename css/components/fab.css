@@ -1,0 +1,152 @@
+/* =====================================================
+   FAB (Floating Action Button) STYLES
+   ===================================================== */
+
+.fab-container {
+    position: fixed;
+    right: 2rem;
+    bottom: 2rem;
+    z-index: var(--z-fab);
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+
+/* Main FAB Button */
+.fab-main {
+    width: 56px;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+    color: var(--text-primary);
+    font-size: 1.5rem;
+    border-radius: 50%;
+    box-shadow: var(--shadow-lg), var(--shadow-glow);
+    transition: all var(--transition-fast);
+    position: relative;
+    overflow: hidden;
+    order: 2;
+}
+
+.fab-main::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, transparent, rgba(255, 255, 255, 0.1));
+    opacity: 0;
+    transition: opacity var(--transition-fast);
+}
+
+.fab-main:hover {
+    transform: scale(1.1);
+    box-shadow: var(--shadow-lg), 0 0 30px var(--primary-glow);
+}
+
+.fab-main:hover::before {
+    opacity: 1;
+}
+
+.fab-main i {
+    transition: transform var(--transition-normal);
+}
+
+.fab-container.active .fab-main i {
+    transform: rotate(45deg);
+}
+
+/* FAB Menu - Now appears ABOVE the main button */
+.fab-menu {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(20px);
+    transition: all var(--transition-normal);
+    order: 1;
+}
+
+.fab-container.active .fab-menu {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+/* FAB Menu Items */
+.fab-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    font-size: 0.9rem;
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border-primary);
+    box-shadow: var(--shadow-md);
+    transition: all var(--transition-fast);
+    white-space: nowrap;
+}
+
+.fab-item i {
+    width: 20px;
+    text-align: center;
+    font-size: 1rem;
+}
+
+.fab-item:hover {
+    background: var(--primary);
+    border-color: var(--primary);
+    transform: translateX(-5px);
+    box-shadow: var(--shadow-glow);
+}
+
+/* FAB Animation Delays */
+.fab-container.active .fab-item:nth-child(1) {
+    animation: fabItemIn 0.3s ease 0.05s both;
+}
+
+.fab-container.active .fab-item:nth-child(2) {
+    animation: fabItemIn 0.3s ease 0.1s both;
+}
+
+.fab-container.active .fab-item:nth-child(3) {
+    animation: fabItemIn 0.3s ease 0.15s both;
+}
+
+@keyframes fabItemIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px) translateX(0);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) translateX(0);
+    }
+}
+
+/* Ripple Effect */
+.fab-main.ripple::after {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    transform: scale(0);
+    animation: ripple 0.6s ease;
+}
+
+@keyframes ripple {
+    to {
+        transform: scale(2);
+        opacity: 0;
+    }
+}
