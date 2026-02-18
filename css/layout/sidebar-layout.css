@@ -323,7 +323,7 @@
 
 /* Sidebar Footer - Add Buttons */
 .sidebar-footer {
-    position: sticky;
+    position: AUTO;
     bottom: 0;
     left: 0;
     right: 0;
