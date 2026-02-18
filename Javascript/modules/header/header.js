@@ -118,64 +118,60 @@ const Header = {
             }
         });
     },
-
-  // Handle login
-async handleLogin() {
+    
+    // Handle login
+   handleLogin() {
     const passwordInput = document.getElementById('passwordInput');
     const errorDiv = document.getElementById('loginError');
     const password = passwordInput.value;
 
-    const email = "admin@email.com"; // Ganti dengan email admin Supabase Anda
-
-    try {
-        const { data, error } = await supabaseClient.auth.signInWithPassword({
-            email,
-            password
-        });
-
-        if (error) throw error;
+    if (password === 'shanz') {
+        sessionStorage.setItem('isAdmin', 'true');
 
         const category = document.body.dataset.category;
         window.location.href = `admin-${category}.html`;
-
-    } catch (error) {
-        errorDiv.textContent = "Login gagal.";
+    } else {
+        errorDiv.textContent = 'Invalid password. Please try again.';
         errorDiv.classList.add('show');
+
+        const modal = document.querySelector('#loginModal .modal');
+        modal.classList.add('confirm-shake');
+        setTimeout(() => modal.classList.remove('confirm-shake'), 500);
+
         passwordInput.value = '';
+        passwordInput.focus();
     }
 },
-
     
     // Handle logout
-   async handleLogout() {
-    await supabaseClient.auth.signOut();
-
-    const category = document.body.dataset.category;
-    window.location.href = `guest-${category}.html`;
-},
-
-    // Validate admin access
-   async validateAdminAccess() {
-    const isAdminPage = document.body.dataset.mode === 'admin';
-
-    if (!isAdminPage) return true;
-
-    const { data: { session } } = await supabaseClient.auth.getSession();
-
-    if (!session) {
+    handleLogout() {
+        // Clear admin session
+        sessionStorage.removeItem('isAdmin');
+        
+        // Redirect to Guest.html
         const category = document.body.dataset.category;
-        window.location.href = `guest-${category}.html`;
-        return false;
+window.location.href = `guest-${category}.html`;
+    },
+    
+    // Check if user is admin
+    isAdmin() {
+        return sessionStorage.getItem('isAdmin') === 'true';
+    },
+    
+    // Validate admin access
+    validateAdminAccess() {
+        const isAdminPage = document.body.dataset.mode === 'admin';
+        
+        if (isAdminPage && !this.isAdmin()) {
+            // Redirect unauthorized users to guest page
+            const category = document.body.dataset.category;
+window.location.href = `guest-${category}.html`;
+            return false;
+        }
+        
+        return true;
     }
-
-    return true;
-}
 };
-
-document.addEventListener("DOMContentLoaded", async () => {
-    Header.init();
-    await Header.validateAdminAccess();
-});
 
 // Export
 window.Header = Header;

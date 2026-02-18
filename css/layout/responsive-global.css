@@ -554,3 +554,14 @@
         border-right-width: 2px;
     }
 }
+@media (max-width: 768px) {
+
+    body.sidebar-open .content,
+    body.sidebar-open .content-layout,
+    body.sidebar-open main {
+        overflow: hidden !important;
+        height: 100vh;
+        touch-action: none;
+    }
+
+}
