@@ -3,8 +3,8 @@
    ===================================================== */
 
 // ⚠️ PENTING: Ganti dengan kredensial Supabase Anda!
-const SUPABASE_URL = 'https://oenbgcqusykxhinhuxgt.supabase.co';
-const SUPABASE_ANON_KEY = 'sb_publishable_FWQ9JAmlo9HouNQ-HNwvdw_DPw3jrV7';
+const SUPABASE_URL = 'https://qjjktaxrnzpdmvwugrlz.supabase.co';
+const SUPABASE_ANON_KEY = 'sb_publishable_cEgC5WI-AXGbI21ni-QKtg_uL5sN5QB';
 
 // Initialize Supabase Client
 const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
