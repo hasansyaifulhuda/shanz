@@ -49,7 +49,7 @@ adminToggle.addEventListener("click", () => {
    💻 ADMIN MODE (CTRL + A)
 ======================= */
 document.addEventListener("keydown", (e) => {
-  if (e.ctrlKey && e.key.toLowerCase() === "a") {
+  if (e.ctrlKey && e.key.toLowerCase() === "q") {
     e.preventDefault();
     toggleAdmin();
   }
