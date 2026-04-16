@@ -34,10 +34,10 @@ adminToggle.addEventListener("click", () => {
   if (clickCount === 1) {
     timer = setTimeout(() => {
       clickCount = 0;
-    }, 1000);
+    }, 700);
   }
 
-  if (clickCount === 10) {
+  if (clickCount === 5) {
     clearTimeout(timer);
     clickCount = 0;
 
@@ -46,7 +46,7 @@ adminToggle.addEventListener("click", () => {
 });
 
 /* =======================
-   💻 ADMIN MODE (CTRL + A)
+   💻 ADMIN MODE (CTRL + Q)
 ======================= */
 document.addEventListener("keydown", (e) => {
   if (e.ctrlKey && e.key.toLowerCase() === "q") {
