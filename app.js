@@ -8,7 +8,6 @@ let isAdmin = false;
 const DOM = {
   list: $('#list-container'),
   loading: $('#loading'),
-  admin: $('#admin-checkbox'),
   fab: $('#fab'),
   modal: $('#modal'),
   email: $('#email-input'),
@@ -20,7 +19,32 @@ const DOM = {
   title: $('#modal-title')
 };
 
+
 const modalContent = document.querySelector(".modal-content");
+
+const adminToggle = document.getElementById("admin-toggle");
+
+let clickCount = 0;
+let timer = null;
+
+adminToggle.addEventListener("click", () => {
+  clickCount++;
+
+  if (clickCount === 1) {
+    timer = setTimeout(() => {
+      clickCount = 0;
+    }, 500);
+  }
+
+  if (clickCount === 3) {
+    clearTimeout(timer);
+    clickCount = 0;
+
+    isAdmin = !isAdmin; // 🔥 penting
+    document.body.classList.toggle("admin-mode", isAdmin);
+    adminToggle.classList.toggle("active");
+  }
+});
 
 function sortData(data) {
   return data.sort((a, b) => {
@@ -40,6 +64,12 @@ async function loadData() {
 
 function render() {
   DOM.list.innerHTML = "";
+
+document.getElementById("total-count").innerText = accounts.length;
+
+  // SELESAI (yang dicentang)
+  const checked = accounts.filter(a => a.checked).length;
+  document.getElementById("checked-count").innerText = checked;
 
   accounts.forEach(a => {
    const card = document.createElement("div");
@@ -144,11 +174,6 @@ DOM.del.onclick = async () => {
 };
 
 DOM.cancel.onclick = closeModal;
-
-DOM.admin.onchange = (e) => {
-  isAdmin = e.target.checked;
-  document.body.classList.toggle("admin-mode", isAdmin);
-};
 
 DOM.fab.onclick = () => openModal();
 

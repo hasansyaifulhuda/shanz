@@ -7,17 +7,39 @@
 
   <link rel="stylesheet" href="style.css">
 
-  <!-- Supabase CDN -->
+  <!-- Supabase -->
   <script type="module" src="app.js"></script>
 </head>
 <body>
 
 <header class="header">
-  <h1>EMAIL</h1>
-  <label class="admin-toggle">
-    <input type="checkbox" id="admin-checkbox">
-    Mode Admin
-  </label>
+
+  <!-- LEFT HEADER -->
+  <div class="header-left">
+    <div class="title-main">EMAIL</div>
+
+    <div class="stats">
+
+      <div class="stat">
+        <span class="label">TOTAL</span>
+        <span id="total-count">0</span>
+      </div>
+
+      <div class="divider">|</div>
+
+      <div class="stat">
+        <span class="label">SELESAI</span>
+        <span id="checked-count">0</span>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- RIGHT HEADER -->
+  <div class="admin-toggle" id="admin-toggle">
+  Admin
+</div>
+
 </header>
 
 <div id="loading" class="loading">Memuat data...</div>
