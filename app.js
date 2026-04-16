@@ -37,7 +37,7 @@ adminToggle.addEventListener("click", () => {
     }, 700);
   }
 
-  if (clickCount === 5) {
+  if (clickCount === 10) {
     clearTimeout(timer);
     clickCount = 0;
 
