@@ -1,4 +1,4 @@
-import { supabase } from "./supabase.js";
+hereimport { supabase } from "./supabase.js";
 
 const $ = (s) => document.querySelector(s);
 
@@ -78,7 +78,7 @@ card.className = "card " + (a.checked ? "checked" : "");
 card.innerHTML = `
   <div class="card-content">
     <div class="email">${a.email}</div>
-    <div class="password">${a.password}</div>
+    <div class="password">${"•".repeat(a.password.length)}</div>
   </div>
   <div class="checkbox-container">
     <input type="checkbox" ${a.checked ? "checked" : ""}>
