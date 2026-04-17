@@ -99,6 +99,9 @@ function render() {
   const checked = accounts.filter(a => a.checked).length;
   document.getElementById("checked-count").innerText = checked;
 
+  const unchecked = accounts.filter(a => !a.checked).length;
+document.getElementById("unchecked-count").innerText = unchecked;
+
   accounts.forEach(a => {
     const card = document.createElement("div");
     card.className = "card " + (a.checked ? "checked" : "");
