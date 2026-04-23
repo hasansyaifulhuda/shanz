@@ -16,14 +16,15 @@ const DOM = {
   save: $('#btn-save'),
   cancel: $('#btn-cancel'),
   del: $('#btn-delete'),
-  title: $('#modal-title')
+  title: $('#modal-title'),
+  search: $('#search-input')
 };
 
 const modalContent = document.querySelector(".modal-content");
 const adminToggle = document.getElementById("admin-toggle");
 
 /* =======================
-   🔐 ADMIN MODE (TAP 5x)
+   🔐 ADMIN MODE
 ======================= */
 let clickCount = 0;
 let timer = null;
@@ -32,22 +33,16 @@ adminToggle.addEventListener("click", () => {
   clickCount++;
 
   if (clickCount === 1) {
-    timer = setTimeout(() => {
-      clickCount = 0;
-    }, 700);
+    timer = setTimeout(() => clickCount = 0, 700);
   }
 
   if (clickCount === 5) {
     clearTimeout(timer);
     clickCount = 0;
-
     toggleAdmin();
   }
 });
 
-/* =======================
-   💻 ADMIN MODE (CTRL + Q)
-======================= */
 document.addEventListener("keydown", (e) => {
   if (e.ctrlKey && e.key.toLowerCase() === "q") {
     e.preventDefault();
@@ -55,9 +50,6 @@ document.addEventListener("keydown", (e) => {
   }
 });
 
-/* =======================
-   🔁 TOGGLE ADMIN
-======================= */
 function toggleAdmin() {
   isAdmin = !isAdmin;
   document.body.classList.toggle("admin-mode", isAdmin);
@@ -65,7 +57,7 @@ function toggleAdmin() {
 }
 
 /* =======================
-   SORT DATA
+   SORT
 ======================= */
 function sortData(data) {
   return data.sort((a, b) => {
@@ -77,7 +69,7 @@ function sortData(data) {
 }
 
 /* =======================
-   LOAD DATA
+   LOAD
 ======================= */
 async function loadData() {
   const { data } = await supabase.from("accounts").select("*");
@@ -87,22 +79,81 @@ async function loadData() {
 }
 
 /* =======================
-   RENDER
+   🔍 DUPLICATE CHECK
+======================= */
+function isDuplicate(email, currentId = null) {
+  return accounts.some(a => 
+    a.email.toLowerCase() === email.toLowerCase() &&
+    a.id !== currentId
+  );
+}
+
+/* =======================
+   ⚠️ WARNING UI
+======================= */
+function showWarning(msg) {
+  let warn = document.getElementById("warning");
+
+  if (!warn) {
+    warn = document.createElement("div");
+    warn.id = "warning";
+    warn.style.color = "#ef4444";
+    warn.style.fontSize = "13px";
+    warn.style.marginTop = "6px";
+    DOM.email.after(warn);
+  }
+
+  warn.innerText = msg;
+}
+
+function clearWarning() {
+  const warn = document.getElementById("warning");
+  if (warn) warn.remove();
+}
+
+/* =======================
+   👀 REALTIME CHECK
+======================= */
+DOM.email.addEventListener("input", () => {
+  const email = DOM.email.value.trim();
+  const id = DOM.id.value;
+
+  if (!email) {
+    clearWarning();
+    DOM.save.disabled = false;
+    return;
+  }
+
+  if (isDuplicate(email, id)) {
+    showWarning("⚠️ Email sudah ada!");
+    DOM.save.disabled = true;
+  } else {
+    clearWarning();
+    DOM.save.disabled = false;
+  }
+});
+
+/* =======================
+   RENDER + SEARCH
 ======================= */
 function render() {
   DOM.list.innerHTML = "";
 
-  // TOTAL
+  const keyword = DOM.search.value.toLowerCase();
+
+  const filtered = accounts.filter(a =>
+    a.email.toLowerCase().includes(keyword)
+  );
+
   document.getElementById("total-count").innerText = accounts.length;
 
-  // SELESAI
   const checked = accounts.filter(a => a.checked).length;
   document.getElementById("checked-count").innerText = checked;
 
   const unchecked = accounts.filter(a => !a.checked).length;
-document.getElementById("unchecked-count").innerText = unchecked;
+  document.getElementById("unchecked-count").innerText = unchecked;
 
-  accounts.forEach(a => {
+  filtered.forEach(a => {
     const card = document.createElement("div");
     card.className = "card " + (a.checked ? "checked" : "");
 
@@ -116,13 +167,11 @@ document.getElementById("unchecked-count").innerText = unchecked;
       </div>
     `;
 
-    /* ✏️ EDIT (klik kiri) */
     const content = card.querySelector(".card-content");
     content.onclick = () => {
       if (isAdmin) openModal(a);
     };
 
-    /* ☑️ CHECKBOX */
     const checkbox = card.querySelector("input");
     checkbox.onchange = async (e) => {
       a.checked = e.target.checked;
@@ -140,10 +189,16 @@ document.getElementById("unchecked-count").innerText = unchecked;
 }
 
 /* =======================
+   SEARCH
+======================= */
+DOM.search.addEventListener("input", render);
+
+/* =======================
    MODAL
 ======================= */
 function openModal(data = null) {
   DOM.modal.classList.add("active");
+  clearWarning();
 
   if (data) {
     modalContent.classList.remove("add-mode");
@@ -165,6 +220,7 @@ function openModal(data = null) {
 
 function closeModal() {
   DOM.modal.classList.remove("active");
+  clearWarning();
 }
 
 /* =======================
@@ -172,10 +228,15 @@ function closeModal() {
 ======================= */
 DOM.save.onclick = async () => {
   const id = DOM.id.value;
-  const email = DOM.email.value;
+  const email = DOM.email.value.trim();
   const password = DOM.password.value;
 
   if (!email || !password) return;
+
+  if (isDuplicate(email, id)) {
+    showWarning("⚠️ Email sudah terdaftar!");
+    return;
+  }
 
   if (id) {
     await supabase
